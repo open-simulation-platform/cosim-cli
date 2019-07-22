@@ -1,0 +1,9 @@
+*.swp
+build/
+
+# JetBrains CLion:
+.idea/
+cmake-build-*/
+
+# Visual Studio Code
+.vscode/
