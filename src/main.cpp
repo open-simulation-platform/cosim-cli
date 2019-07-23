@@ -1,9 +1,12 @@
-#include <cse/lib_info.hpp>
-#include <iostream>
+#include "cli_application.hpp"
 
-
-int main()
+int main(int argc, char const* const* argv)
 {
-    std::cout << "Hello " << cse::library_short_name << "!" << std::endl;
-    return 0;
+    cli_application app(
+        "CSE CLI",
+        "0.1.0",
+        "cse",
+        "Command-line interface to the Core Simulation Environment",
+        "The Core Simulation Environment is free and open-source software for running distributed co-simulations.");
+    return app.run(argc, argv);
 }

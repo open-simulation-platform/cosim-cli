@@ -26,7 +26,7 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake")
 include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 conan_basic_setup(NO_OUTPUT_DIRS)
 
-find_package(Boost REQUIRED COMPONENTS date_time fiber filesystem log)
+find_package(Boost REQUIRED COMPONENTS date_time fiber filesystem log program_options)
 find_package(LIBZIP REQUIRED)
 find_package(FMILibrary REQUIRED)
 find_package(GSL REQUIRED)
@@ -36,7 +36,14 @@ find_package(csecore REQUIRED)
 # Targets
 # ==============================================================================
 
-add_executable(cse-cli "src/main.cpp")
-target_link_libraries(cse-cli
+add_executable(cse
+    "src/cli_application.hpp"
+    "src/cli_application.cpp"
+    "src/console_utils.hpp"
+    "src/console_utils.cpp"
+    "src/main.cpp"
+)
+target_link_libraries(cse
     PRIVATE
-        csecore::csecorecpp)
+        csecore::csecorecpp
+        Boost::program_options)
