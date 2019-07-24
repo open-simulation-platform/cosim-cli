@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "console_utils.hpp"
 
 #include <algorithm>
@@ -73,7 +74,7 @@ void print_wrapped_text(
             // The first word may overflow to the next line.
             const auto firstWord = consume(word, width - linePos);
             ostream << firstWord;
-            linePos += firstWord.size();
+            linePos += static_cast<int>(firstWord.size());
 
             if (word.empty()) {
                 // Iterate over words following the first one
