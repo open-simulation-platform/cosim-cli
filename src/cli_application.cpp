@@ -200,6 +200,8 @@ private:
     static void print_parameters_section(
         const boost::program_options::options_description& positionalOptions)
     {
+        if (positionalOptions.options().empty()) return;
+
         // We now make some assumptions about how boost::program_options formats
         // its options_description output.
         std::stringstream ss;
@@ -216,6 +218,7 @@ private:
     static void print_options_section(
         const boost::program_options::options_description& options)
     {
+        if (options.options().empty()) return;
         std::cout
             << "OPTIONS\n"
             << options
