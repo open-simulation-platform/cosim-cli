@@ -182,7 +182,7 @@ private:
             }
             usageLine << '>';
         }
-        usageLine << " [options...]\n\n";
+        usageLine << " [options...]";
 
         std::cout << "SYNOPSIS\n";
         print_wrapped_text(std::cout, usageLine.str(), lineWidth, indent);

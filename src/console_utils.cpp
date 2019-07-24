@@ -67,7 +67,9 @@ void print_wrapped_text(
         auto word = consume_word(paragraph);
 
         // Iterate over visual lines
-        while (!word.empty()) {
+        if (word.empty()) {
+            ostream << '\n';
+        } else do {
             int linePos = 0;
             for (; linePos < indent; ++linePos) ostream << ' ';
 
@@ -91,7 +93,7 @@ void print_wrapped_text(
                 }
             }
             ostream << '\n';
-        }
+        } while (!word.empty());
     }
 }
 
