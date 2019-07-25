@@ -125,6 +125,7 @@ private:
         print_name_section(command_, briefDescription_, cols);
         print_synopsis_section(command_, positions, cols);
         print_description_section(longDescription_, cols);
+        print_subcommands_section(subcommands_, cols);
         print_options_section(options);
     }
 
@@ -197,8 +198,21 @@ private:
         std::cout << '\n';
     }
 
+    static void print_subcommands_section(
+        const subcommand_map& subcommands,
+        int lineWidth)
+    {
+        auto fakeParameters = boost::program_options::options_description(lineWidth, lineWidth/2);
+        for (const auto& sc : subcommands) {
+            fakeParameters.add_options()(
+                sc.first.c_str(), sc.second->brief_description().c_str());
+        }
+        print_parameters_section(fakeParameters, "SUBCOMMANDS");
+    }
+
     static void print_parameters_section(
-        const boost::program_options::options_description& positionalOptions)
+        const boost::program_options::options_description& positionalOptions,
+        const char* title = "PARAMETERS")
     {
         if (positionalOptions.options().empty()) return;
 
@@ -211,7 +225,7 @@ private:
         boost::algorithm::replace_all(s, " arg ", "       ");
 
         std::cout
-            << "PARAMETERS\n"
+            << title << '\n'
             << s << '\n';
     }
 
