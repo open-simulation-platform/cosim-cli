@@ -320,6 +320,7 @@ public:
         po::store(
             po::command_line_parser(args).options(options).positional(positions).run(),
             values);
+        po::notify(values);
 
         // Handle common options (except --help, which will have been turned into
         // a subcommand by now).
