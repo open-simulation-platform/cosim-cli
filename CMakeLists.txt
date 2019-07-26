@@ -44,6 +44,8 @@ add_executable(cse
     "src/inspect.hpp"
     "src/inspect.cpp"
     "src/main.cpp"
+    "src/run.hpp"
+    "src/run.cpp"
 )
 target_link_libraries(cse
     PRIVATE

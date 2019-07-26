@@ -1,5 +1,6 @@
 #include "cli_application.hpp"
 #include "inspect.hpp"
+#include "run.hpp"
 
 int main(int argc, char const* const* argv)
 {
@@ -10,5 +11,6 @@ int main(int argc, char const* const* argv)
         "Command-line interface to the Core Simulation Environment",
         "The Core Simulation Environment is free and open-source software for running distributed co-simulations.");
     app.add_subcommand(std::make_unique<inspect_subcommand>());
+    app.add_subcommand(std::make_unique<run_subcommand>());
     return app.run(argc, argv);
 }
