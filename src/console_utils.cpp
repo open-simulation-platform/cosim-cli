@@ -1,4 +1,6 @@
-#define NOMINMAX
+#ifdef _WIN32
+#    define NOMINMAX
+#endif
 #include "console_utils.hpp"
 
 #include <algorithm>
@@ -69,31 +71,32 @@ void print_wrapped_text(
         // Iterate over visual lines
         if (word.empty()) {
             ostream << '\n';
-        } else do {
-            int linePos = 0;
-            for (; linePos < indent; ++linePos) ostream << ' ';
+        } else
+            do {
+                int linePos = 0;
+                for (; linePos < indent; ++linePos) ostream << ' ';
 
-            // The first word may overflow to the next line.
-            const auto firstWord = consume(word, width - linePos);
-            ostream << firstWord;
-            linePos += static_cast<int>(firstWord.size());
+                // The first word may overflow to the next line.
+                const auto firstWord = consume(word, width - linePos);
+                ostream << firstWord;
+                linePos += static_cast<int>(firstWord.size());
 
-            if (word.empty()) {
-                // Iterate over words following the first one
-                for (;;) {
-                    space = consume_space(paragraph);
-                    word = consume_word(paragraph);
-                    const auto wordWidth = static_cast<int>(space.size() + word.size());
-                    if (word.empty() || linePos + wordWidth > width) {
-                        break;
-                    } else {
-                        ostream << space << word;
-                        linePos += wordWidth;
+                if (word.empty()) {
+                    // Iterate over words following the first one
+                    for (;;) {
+                        space = consume_space(paragraph);
+                        word = consume_word(paragraph);
+                        const auto wordWidth = static_cast<int>(space.size() + word.size());
+                        if (word.empty() || linePos + wordWidth > width) {
+                            break;
+                        } else {
+                            ostream << space << word;
+                            linePos += wordWidth;
+                        }
                     }
                 }
-            }
-            ostream << '\n';
-        } while (!word.empty());
+                ostream << '\n';
+            } while (!word.empty());
     }
 }
 
