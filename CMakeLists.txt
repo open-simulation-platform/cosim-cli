@@ -48,6 +48,8 @@ add_executable(cse
     "src/run.cpp"
     "src/run_common.hpp"
     "src/run_common.cpp"
+    "src/run_single.hpp"
+    "src/run_single.cpp"
 )
 target_link_libraries(cse
     PRIVATE
