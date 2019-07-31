@@ -7,9 +7,9 @@
 #include <exception>
 #include <iostream>
 #include <map>
-#include <optional>
 #include <stdexcept>
 #include <utility>
+#include <vector>
 
 #ifndef _WIN32
 #    include <sysexits.h>
@@ -20,17 +20,16 @@
 #endif
 
 
-// Adds the built-in options that are common to all subcommands.
-void setup_common_options(boost::program_options::options_description& opts)
+// A list type for option handlers.
+using option_set_list = std::vector<std::unique_ptr<cli_option_set>>;
+
+
+// Calls the `setup_options()` functions of multiple `cli_option_set` objects.
+void setup_options(
+    const option_set_list& optionSets,
+    boost::program_options::options_description& options)
 {
-    // clang-format off
-    opts.add_options()
-        ("help",
-            "Display a help message and exit.")
-        ("version",
-            "Display program version information and exit.")
-        ;
-    // clang-format on
+    for (const auto& s : optionSets) s->setup_options(options);
 }
 
 
@@ -62,10 +61,12 @@ public:
         std::string_view command,
         std::string_view briefDescription,
         std::string_view longDescription,
+        const option_set_list& globalOptionSets,
         const subcommand_map& subcommands)
         : command_(command)
         , briefDescription_(briefDescription)
         , longDescription_(longDescription)
+        , globalOptionSets_(globalOptionSets)
         , subcommands_(subcommands)
     {
     }
@@ -116,7 +117,8 @@ private:
     {
         const auto cols = std::max(get_console_width(), minLineWidth);
         auto options = boost::program_options::options_description(cols, cols / 2);
-        setup_common_options(options);
+        ::setup_options(globalOptionSets_, options);
+        setup_help_option(options);
 
         boost::program_options::positional_options_description positions;
         positions.add("subcommand", 1);
@@ -136,7 +138,8 @@ private:
         auto positionalOptions = boost::program_options::options_description(cols, cols / 2);
         auto positions = boost::program_options::positional_options_description();
         s.setup_options(options, positionalOptions, positions);
-        setup_common_options(options);
+        ::setup_options(globalOptionSets_, options);
+        setup_help_option(options);
 
         const auto fullCommand = command_ + ' ' + s.name();
 
@@ -145,6 +148,11 @@ private:
         print_description_section(s.long_description(), cols);
         print_parameters_section(positionalOptions);
         print_options_section(options);
+    }
+
+    static void setup_help_option(boost::program_options::options_description& options)
+    {
+        options.add_options()("help", "Display a help message and exit.");
     }
 
     static void print_name_section(
@@ -242,6 +250,7 @@ private:
     std::string command_;
     std::string briefDescription_;
     std::string longDescription_;
+    const option_set_list& globalOptionSets_;
     const subcommand_map& subcommands_;
 };
 
@@ -255,19 +264,16 @@ class cli_application::impl
 {
 public:
     impl(
-        std::string_view name,
-        std::string_view version,
         std::string_view command,
         std::string_view briefDescription,
         std::string_view longDescription)
-        : name_(name)
-        , version_(version)
-        , command_(command)
+        :  command_(command)
     {
         subcommands_["help"] = std::make_unique<help_subcommand>(
             command,
             briefDescription,
             longDescription,
+            globalOptionSets_,
             subcommands_);
     }
 
@@ -279,6 +285,11 @@ public:
     impl& operator=(impl&&) = delete;
     impl(const impl&) = delete;
     impl& operator=(const impl&) = delete;
+
+    void add_global_options(std::unique_ptr<cli_option_set> optionSet)
+    {
+        globalOptionSets_.push_back(std::move(optionSet));
+    }
 
     void add_subcommand(std::unique_ptr<cli_subcommand> subcommand)
     {
@@ -309,24 +320,24 @@ public:
             }
         }
 
-        // Parse command-line arguments.
+        // Set up options
         namespace po = boost::program_options;
         po::options_description options;
         po::positional_options_description positions;
-        setup_common_options(options);
+
+        setup_options(globalOptionSets_, options);
         if (subcommand) subcommand->setup_options(options, options, positions);
 
+        // Parse command-line arguments.
         po::variables_map values;
         po::store(
             po::command_line_parser(args).options(options).positional(positions).run(),
             values);
         po::notify(values);
 
-        // Handle common options (except --help, which will have been turned into
-        // a subcommand by now).
-        if (values.count("version")) {
-            print_version();
-            return EX_OK;
+        // Handle global options
+        for (const auto& s : globalOptionSets_) {
+            if (const auto retVal = s->handle_options(values)) return *retVal;
         }
 
         // Finally, run subcommand.
@@ -338,14 +349,8 @@ public:
     }
 
 private:
-    void print_version() const
-    {
-        std::cout << name_ << ' ' << version_ << std::endl;
-    }
-
-    std::string name_;
-    std::string version_;
     std::string command_;
+    std::vector<std::unique_ptr<cli_option_set>> globalOptionSets_;
     subcommand_map subcommands_;
 };
 
@@ -356,12 +361,10 @@ private:
 
 
 cli_application::cli_application(
-    std::string_view name,
-    std::string_view version,
     std::string_view command,
     std::string_view briefDescription,
     std::string_view longDescription)
-    : impl_(std::make_unique<impl>(name, version, command, briefDescription, longDescription))
+    : impl_(std::make_unique<impl>(command, briefDescription, longDescription))
 {
 }
 
@@ -373,6 +376,13 @@ cli_application::cli_application(cli_application&&) noexcept = default;
 
 
 cli_application& cli_application::operator=(cli_application&&) noexcept = default;
+
+
+void cli_application::add_global_options(
+    std::unique_ptr<cli_option_set> optionSet)
+{
+    impl_->add_global_options(std::move(optionSet));
+}
 
 
 void cli_application::add_subcommand(std::unique_ptr<cli_subcommand> subcommand)

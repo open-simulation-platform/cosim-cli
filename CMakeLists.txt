@@ -42,6 +42,8 @@ add_executable(cse
     "src/console_utils.hpp"
     "src/console_utils.cpp"
     "src/main.cpp"
+    "src/version_option.hpp"
+    "src/version_option.cpp"
 )
 target_link_libraries(cse
     PRIVATE

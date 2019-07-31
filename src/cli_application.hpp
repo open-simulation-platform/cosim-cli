@@ -4,8 +4,47 @@
 #include <boost/program_options.hpp>
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
+
+
+/// A base class for `cli_application` global option handlers.
+class cli_option_set
+{
+public:
+    /**
+     *  Defines the command-line options in this set.
+     *
+     *  Overriding functions are not allowed to overwrite the `options`
+     *  object, only add to it.
+     *
+     *  \param [in] options
+     *      Object to be filled with option descriptions.
+     */
+    virtual void setup_options(
+        boost::program_options::options_description& options) = 0;
+
+    /**
+     *  Handles options passed on the command line when the program is run.
+     *
+     *  If this function throws an exception or returns an exit code (i.e.,
+     *  a non-empty object), the program will terminate immediately.
+     *  No further option handlers will be called, and no subcommand will be
+     *  invoked.
+     *
+     *  \param [in] args
+     *      Command-line arguments, parsed according to the options
+     *      descriptions produced by `setup_options()`.
+     *      May contain other global options, which should be ignored.
+     *
+     *  \returns
+     *      An exit code for the program if the given options should cause
+     *      the program to terminate immediately, or an empty object otherwise.
+     */
+    virtual std::optional<int> handle_options(
+        const boost::program_options::variables_map& args) = 0;
+};
 
 
 /**
@@ -69,10 +108,9 @@ public:
  *  subcommand structure.
  *
  *  Only one level of subcommands is supported.  Subcommands and their
- *  options are defined by `cli_subcommand` objects.  The "help" subcommand
- *  is built in and may not be redefined.  There are also some built-in
- *  global options, `--help` and `--version`, that will work across
- *  subcommands.
+ *  options are defined by `cli_subcommand` objects, while global options
+ *  are defined by `cli_option_set` objects.  The `help` subcommand
+ *  and the equivalent `--help` option are built in and may not be redefined.
  */
 class cli_application
 {
@@ -81,12 +119,8 @@ public:
      *  Constructor.
      *
      *  The constructor parameters are currently only used to provide
-     *  human-readable output for the `--help` and `--version` options.
+     *  human-readable output for the `help` subcommand/option.
      *
-     *  \param [in] name
-     *      The (human-readable) name of the application.
-     *  \param [in] version
-     *      The application version.
      *  \param [in] command
      *      The command that gets called to run the application (typically
      *      the executable base name without an extension).
@@ -97,8 +131,6 @@ public:
      *      A longer description of the application.
      */
     cli_application(
-        std::string_view name,
-        std::string_view version,
         std::string_view command,
         std::string_view briefDescription,
         std::string_view longDescription = {});
@@ -112,6 +144,17 @@ public:
     cli_application& operator=(const cli_application&) = delete;
 
     /**
+     *  Adds a set of global options to the application.
+     *
+     *  Options may not conflict with options from other global option sets,
+     *  nor with subcommand-specific options.
+     *
+     *  Options will be handled by the `run()` command in the order
+     *  they were added.
+     */
+    void add_global_options(std::unique_ptr<cli_option_set> optionSet);
+
+    /**
      *  Adds a subcommand to the application.
      *
      *  It is not allowed to add two subcommands with the same name.
@@ -119,9 +162,8 @@ public:
     void add_subcommand(std::unique_ptr<cli_subcommand> subcommand);
 
     /**
-     *  Parses the given command line arguments, detects which subcommand
-     *  the user specified, and dispatches to the appropriate
-     *  `cli_subcommand::run()` function.
+     *  Parses the given command line argument, runs global option handlers,
+     *  and invokes the requested subcommand.
      *
      *  \returns
      *      An exit code that can be returned from the program's `main()`
