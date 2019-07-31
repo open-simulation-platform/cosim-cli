@@ -396,13 +396,13 @@ int cli_application::run(int argc, char const* const* argv) const noexcept
     try {
         return impl_->run(argc, argv);
     } catch (const boost::program_options::error& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "error: " << e.what() << std::endl;
         return EX_USAGE;
     } catch (const std::logic_error& e) {
-        std::cerr << "Internal error: " << e.what() << std::endl;
+        std::cerr << "error: internal: " << e.what() << std::endl;
         return EX_SOFTWARE;
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+        std::cerr << "error: " << e.what() << std::endl;
         return 1;
     }
 }

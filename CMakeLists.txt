@@ -41,6 +41,8 @@ add_executable(cse
     "src/cli_application.cpp"
     "src/console_utils.hpp"
     "src/console_utils.cpp"
+    "src/logging_options.hpp"
+    "src/logging_options.cpp"
     "src/main.cpp"
     "src/version_option.hpp"
     "src/version_option.cpp"
