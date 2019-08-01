@@ -13,12 +13,14 @@
 
 
 void inspect_subcommand::setup_options(
-    boost::program_options::options_description& /*options*/,
+    boost::program_options::options_description& options,
     boost::program_options::options_description& positionalOptions,
     boost::program_options::positional_options_description& positions)
     const noexcept
 {
     // clang-format off
+    options.add_options()
+        ("no-vars", "Do not print information about variables.");
     positionalOptions.add_options()
         ("uri_or_path",
             boost::program_options::value<std::string>()->required(),
@@ -30,18 +32,22 @@ void inspect_subcommand::setup_options(
 
 namespace
 {
+constexpr int keyWidth = 14;
 
 void print_model_description(const cse::model_description& md)
 {
-    constexpr int keyWidth = 14;
     std::cout
         << std::left
         << std::setw(keyWidth) << "name:" << md.name << '\n'
         << std::setw(keyWidth) << "uuid:" << md.uuid << '\n'
         << std::setw(keyWidth) << "description:" << md.description << '\n'
         << std::setw(keyWidth) << "author:" << md.author << '\n'
-        << std::setw(keyWidth) << "version:" << md.version << '\n'
-        << "variables:\n";
+        << std::setw(keyWidth) << "version:" << md.version << '\n';
+}
+
+void print_variable_descriptions(const cse::model_description& md)
+{
+    std::cout << "variables:\n";
     for (const auto& v : md.variables) {
         std::cout
             << "  - " << std::setw(keyWidth) << "name:" << v.name << '\n'
@@ -55,7 +61,6 @@ void print_model_description(const cse::model_description& md)
         }
     }
 }
-
 
 #ifdef _WIN32
 bool looks_like_path(std::string_view str)
@@ -90,5 +95,8 @@ int inspect_subcommand::run(const boost::program_options::variables_map& args) c
     const auto uriResolver = cse::default_model_uri_resolver();
     const auto model = uriResolver->lookup_model(baseUri, uriReference);
     print_model_description(*model->description());
+    if (args.count("no-vars") == 0) {
+        print_variable_descriptions(*model->description());
+    }
     return 0;
 }
