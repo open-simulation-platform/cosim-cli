@@ -46,6 +46,8 @@ add_executable(cse
     "src/logging_options.hpp"
     "src/logging_options.cpp"
     "src/main.cpp"
+    "src/run.hpp"
+    "src/run.cpp"
     "src/version_option.hpp"
     "src/version_option.cpp"
 )
