@@ -1,5 +1,7 @@
 #include "run_common.hpp"
 
+#include <cse/log/logger.hpp>
+
 #include <ios>
 #include <iostream>
 
@@ -72,13 +74,10 @@ void progress_logger::update(cse::time_point currentTime)
     const auto progress =
         100.0 * (currentDuration.count() / fullDuration_.count());
     while (nextPercentage_ <= progress) {
-        // NOTE: The use of std::clog here is a temporary solution while
-        // we wait for cse-core issue #110. We should use the same logging
-        // mechanism as cse-core, so all output can be filtered by the user.
-        std::clog
+        BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
             << nextPercentage_ << "% complete, t="
             << std::fixed << cse::to_double_time_point(currentTime)
-            << std::defaultfloat << std::endl;
+            << std::defaultfloat;
         nextPercentage_ += percentIncrement_;
     }
 }
