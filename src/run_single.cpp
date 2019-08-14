@@ -183,10 +183,10 @@ public:
             }
         }
         outputStream_ << "Time";
-        outputStream_ << realVarHeader.rdbuf();
-        outputStream_ << integerVarHeader.rdbuf();
-        outputStream_ << booleanVarHeader.rdbuf();
-        outputStream_ << stringVarHeader.rdbuf();
+        if (realVarHeader.rdbuf()->in_avail()) outputStream_ << realVarHeader.rdbuf();
+        if (integerVarHeader.rdbuf()->in_avail()) outputStream_ << integerVarHeader.rdbuf();
+        if (booleanVarHeader.rdbuf()->in_avail()) outputStream_ << booleanVarHeader.rdbuf();
+        if (stringVarHeader.rdbuf()->in_avail()) outputStream_ << stringVarHeader.rdbuf();
         outputStream_ << '\n';
     }
 
