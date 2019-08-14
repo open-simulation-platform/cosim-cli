@@ -48,6 +48,10 @@ add_executable(cse
     "src/main.cpp"
     "src/run.hpp"
     "src/run.cpp"
+    "src/run_common.hpp"
+    "src/run_common.cpp"
+    "src/run_single.hpp"
+    "src/run_single.cpp"
     "src/version_option.hpp"
     "src/version_option.cpp"
 )

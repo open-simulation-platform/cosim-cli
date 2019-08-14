@@ -2,6 +2,7 @@
 #include "inspect.hpp"
 #include "logging_options.hpp"
 #include "run.hpp"
+#include "run_single.hpp"
 #include "version_option.hpp"
 
 #include <cse/log/simple.hpp>
@@ -32,5 +33,6 @@ int main(int argc, char const* const* argv)
     app.add_global_options(std::make_unique<version_option>("CSE CLI", "0.1.0"));
     app.add_subcommand(std::make_unique<inspect_subcommand>());
     app.add_subcommand(std::make_unique<run_subcommand>());
+    app.add_subcommand(std::make_unique<run_single_subcommand>());
     return app.run(argc, argv);
 }
