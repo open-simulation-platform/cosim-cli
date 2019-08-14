@@ -43,9 +43,13 @@ add_executable(cse
     "src/console_utils.cpp"
     "src/inspect.hpp"
     "src/inspect.cpp"
+    "src/logging_options.hpp"
+    "src/logging_options.cpp"
     "src/main.cpp"
     "src/run.hpp"
     "src/run.cpp"
+    "src/version_option.hpp"
+    "src/version_option.cpp"
 )
 target_link_libraries(cse
     PRIVATE
