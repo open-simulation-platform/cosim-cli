@@ -210,7 +210,7 @@ private:
         const subcommand_map& subcommands,
         int lineWidth)
     {
-        auto fakeParameters = boost::program_options::options_description(lineWidth, lineWidth/2);
+        auto fakeParameters = boost::program_options::options_description(lineWidth, lineWidth / 2);
         for (const auto& sc : subcommands) {
             fakeParameters.add_options()(
                 sc.first.c_str(), sc.second->brief_description().c_str());
@@ -267,7 +267,7 @@ public:
         std::string_view command,
         std::string_view briefDescription,
         std::string_view longDescription)
-        :  command_(command)
+        : command_(command)
     {
         subcommands_["help"] = std::make_unique<help_subcommand>(
             command,

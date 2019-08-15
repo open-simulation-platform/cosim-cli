@@ -5,13 +5,12 @@
 
 #include "run_common.hpp"
 
-#include <cse/model.hpp>
-#include <cse/orchestration.hpp>
-#include <cse/timer.hpp>
-
 #include <boost/container/vector.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <cse/model.hpp>
+#include <cse/orchestration.hpp>
+#include <cse/timer.hpp>
 #include <gsl/span>
 
 #include <algorithm>
