@@ -237,7 +237,8 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
     progress_logger progress(
         runOptions.begin_time,
         runOptions.end_time - runOptions.begin_time,
-        10);
+        10,
+        runOptions.mr_progress_resolution);
 
     cse::real_time_timer timer;
     if (runOptions.rtf_target) {
