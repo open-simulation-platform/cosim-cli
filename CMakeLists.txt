@@ -23,8 +23,12 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake")
 # Dependencies
 # ==============================================================================
 
-include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-conan_basic_setup(NO_OUTPUT_DIRS)
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+    conan_basic_setup(NO_OUTPUT_DIRS)
+else()
+    message(FATAL_ERROR "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first!")
+endif()
 
 find_package(Boost REQUIRED COMPONENTS date_time fiber filesystem log program_options)
 find_package(LIBZIP REQUIRED)
