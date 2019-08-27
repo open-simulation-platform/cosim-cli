@@ -5,10 +5,9 @@
 #include "run_single.hpp"
 #include "version_option.hpp"
 
-#include <cse/log/simple.hpp>
-
 #include <boost/log/expressions.hpp>
 #include <boost/log/utility/setup/console.hpp>
+#include <cse/log/simple.hpp>
 
 
 void setup_logging_sink()

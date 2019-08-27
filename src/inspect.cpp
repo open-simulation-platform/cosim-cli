@@ -1,9 +1,8 @@
 #include "inspect.hpp"
 
+#include <boost/filesystem.hpp>
 #include <cse/orchestration.hpp>
 #include <cse/uri.hpp>
-
-#include <boost/filesystem.hpp>
 
 #ifdef _WIN32
 #    include <cctype>
