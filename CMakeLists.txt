@@ -28,8 +28,9 @@ else()
     message(FATAL_ERROR "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first!")
 endif()
 
-find_package(Boost REQUIRED COMPONENTS date_time fiber filesystem log program_options)
 find_package(csecore REQUIRED)
+find_package(Boost REQUIRED COMPONENTS program_options)
+
 
 # ==============================================================================
 # Targets
