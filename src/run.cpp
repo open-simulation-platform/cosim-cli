@@ -42,8 +42,9 @@ public:
     progress_monitor(
         cse::time_point startTime,
         cse::duration duration,
-        int percentIncrement = 10)
-        : logger_(startTime, duration, percentIncrement)
+        int percentIncrement,
+        std::optional<int> mrProgressResolution)
+        : logger_(startTime, duration, percentIncrement, mrProgressResolution)
     {}
 
 private:
@@ -95,7 +96,9 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
     execution.add_observer(
         std::make_shared<progress_monitor>(
             runOptions.begin_time,
-            runOptions.end_time - runOptions.begin_time));
+            runOptions.end_time - runOptions.begin_time,
+            10,
+            runOptions.mr_progress_resolution));
 
     execution.simulate_until(runOptions.end_time).get();
     return 0;

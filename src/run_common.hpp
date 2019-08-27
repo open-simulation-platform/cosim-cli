@@ -20,6 +20,7 @@ struct common_run_option_values
     cse::time_point begin_time;
     cse::time_point end_time;
     std::optional<double> rtf_target;
+    std::optional<int> mr_progress_resolution;
 };
 
 
@@ -35,15 +36,18 @@ public:
     progress_logger(
         cse::time_point startTime,
         cse::duration duration,
-        int percentIncrement);
+        int percentIncrement,
+        std::optional<int> mrProgressResolution);
 
     void update(cse::time_point currentTime);
 
 private:
     const cse::time_point startTime_;
-    const std::chrono::duration<double> fullDuration_;
+    const double fullDuration_;
     const int percentIncrement_;
-    int nextPercentage_ = 10;
+    const std::optional<int> mrProgressResolution_;
+    int nextPercentage_;
+    int nextMRProgress_ = 1;
 };
 
 
