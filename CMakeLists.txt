@@ -24,8 +24,9 @@ endif()
 include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 conan_basic_setup(NO_OUTPUT_DIRS)
 
-find_package(Boost REQUIRED COMPONENTS date_time fiber filesystem log program_options)
 find_package(csecore REQUIRED)
+find_package(Boost REQUIRED COMPONENTS program_options)
+
 
 # ==============================================================================
 # Targets
