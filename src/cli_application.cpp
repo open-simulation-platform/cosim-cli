@@ -49,6 +49,29 @@ const cli_subcommand* get_subcommand(
 }
 
 
+// Creates a new `options_description` with the same options as `unsorted`,
+// only sorted lexicographically.  The somewhat weird signature for this
+// function is a result of the very limited interface of the
+// `options_description` class, which doesn't allow extraction of constructor
+// arguments after construction.
+template<typename... A>
+boost::program_options::options_description sorted_options_description(
+    const boost::program_options::options_description& unsorted,
+    A&&... constructorArguments)
+{
+    auto options = unsorted.options();
+    std::sort(
+        options.begin(),
+        options.end(),
+        [](auto a, auto b) {
+            return a->canonical_display_name() < b->canonical_display_name();
+        });
+    auto sorted = boost::program_options::options_description(
+        std::forward<A>(constructorArguments)...);
+    for (auto o : options) sorted.add(o);
+    return sorted;
+}
+
 // =============================================================================
 // help_subcommand (internal)
 // =============================================================================
@@ -116,9 +139,10 @@ private:
     void print_toplevel_help() const
     {
         const auto cols = std::max(get_console_width(), minLineWidth);
-        auto options = boost::program_options::options_description(cols, cols / 2);
+        auto options = boost::program_options::options_description();
         ::setup_options(globalOptionSets_, options);
         setup_help_option(options);
+        const auto sortedOptions = sorted_options_description(options, cols, cols / 2);
 
         boost::program_options::positional_options_description positions;
         positions.add("subcommand", 1);
@@ -128,18 +152,19 @@ private:
         print_synopsis_section(command_, positions, cols);
         print_description_section(longDescription_, cols);
         print_subcommands_section(subcommands_, cols);
-        print_options_section(options);
+        print_options_section(sortedOptions);
     }
 
     void print_subcommand_help(const cli_subcommand& s) const
     {
         const auto cols = std::max(get_console_width(), minLineWidth);
-        auto options = boost::program_options::options_description(cols, cols / 2);
+        auto options = boost::program_options::options_description();
         auto positionalOptions = boost::program_options::options_description(cols, cols / 2);
         auto positions = boost::program_options::positional_options_description();
         s.setup_options(options, positionalOptions, positions);
         ::setup_options(globalOptionSets_, options);
         setup_help_option(options);
+        const auto sortedOptions = sorted_options_description(options, cols, cols / 2);
 
         const auto fullCommand = command_ + ' ' + s.name();
 
@@ -147,7 +172,7 @@ private:
         print_synopsis_section(fullCommand, positions, cols);
         print_description_section(s.long_description(), cols);
         print_parameters_section(positionalOptions);
-        print_options_section(options);
+        print_options_section(sortedOptions);
     }
 
     static void setup_help_option(boost::program_options::options_description& options)
