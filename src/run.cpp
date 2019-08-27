@@ -81,6 +81,7 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
     const auto sspDir = boost::filesystem::absolute(args["ssp_dir"].as<std::string>());
     auto [execution, simulatorMap] =
         cse::load_ssp(*uriResolver, sspDir, runOptions.begin_time);
+    (void)simulatorMap; // Get rid of unused compiler warning.
 
     // NOTE: The use of absolute() here is a workaround for cse-core issue #310.
     const auto outputDir =
