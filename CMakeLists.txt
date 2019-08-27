@@ -16,8 +16,6 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_definitions("-D_SCL_SECURE_NO_WARNINGS" "-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
-# Enable CMake to find our custom modules.
-list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake")
 
 # ==============================================================================
 # Dependencies
@@ -31,9 +29,6 @@ else()
 endif()
 
 find_package(Boost REQUIRED COMPONENTS date_time fiber filesystem log program_options)
-find_package(LIBZIP REQUIRED)
-find_package(FMILibrary REQUIRED)
-find_package(GSL REQUIRED)
 find_package(csecore REQUIRED)
 
 # ==============================================================================
