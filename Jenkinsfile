@@ -28,8 +28,8 @@ pipeline {
                             steps {
                                 dir('debug-build') {
                                     bat 'conan install ../ -s build_type=Debug -b missing'
-                                    bat 'cmake -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017 Win64" ../'
-                                    bat 'cmake --build .'
+                                    bat 'cmake -G "Visual Studio 15 2017 Win64" ../'
+                                    bat 'cmake --build . --config Debug'
                                 }
                             }
                         }
@@ -37,8 +37,8 @@ pipeline {
                             steps {
                                 dir('release-build') {
                                     bat 'conan install ../ -s build_type=Release -b missing'
-                                    bat 'cmake -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" ../'
-                                    bat 'cmake --build .'
+                                    bat 'cmake -G "Visual Studio 15 2017 Win64" ../'
+                                    bat 'cmake --build . --config Release'
                                 }
                             }
                             post {
