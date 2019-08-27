@@ -83,7 +83,7 @@ pipeline {
                         }
                         stage('Build Release') {
                             steps {
-                                dir('release-build-conan') {
+                                dir('release-build') {
                                     sh 'conan install ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -b missing'
                                     sh 'cmake -DCMAKE_BUILD_TYPE=Release ../'
                                     sh 'cmake --build .'
@@ -91,7 +91,7 @@ pipeline {
                             }
                             post {
                                 success {
-                                    dir('release-build/') {
+                                    dir('release-build') {
                                         archiveArtifacts artifacts: 'cse',  fingerprint: true
                                     }
                                 }
