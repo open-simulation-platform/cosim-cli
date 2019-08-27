@@ -232,6 +232,9 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
 {
     const auto runOptions = get_common_run_options(args);
     const auto stepSize = cse::to_duration(args["step-size"].as<double>());
+    if (stepSize <= cse::duration(0)) {
+        throw boost::program_options::error("Invalid step size (must be >0)");
+    }
 
     progress_logger progress(
         runOptions.begin_time,
@@ -291,7 +294,7 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
                 "Simulator was unable to complete time step at t=" +
                 std::to_string(cse::to_double_time_point(t)));
         }
-        t += stepSize;
+        t += dt;
         output.update(t);
         timer.sleep(t);
         progress.update(t);
