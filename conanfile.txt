@@ -3,3 +3,6 @@ cse-core/0.4.0@osp/master
 
 [generators]
 cmake
+
+[imports]
+bin, *.dll -> ./bin # Copies all dll files from packages bin folder to my local "bin" folder
