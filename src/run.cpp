@@ -80,8 +80,7 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
     const auto uriResolver = cse::default_model_uri_resolver();
     // NOTE: The use of absolute() here is a workaround for cse-core issue #309.
     const auto sspDir = boost::filesystem::absolute(args["ssp_dir"].as<std::string>());
-    auto [execution, simulatorMap] =
-        cse::load_ssp(*uriResolver, sspDir, runOptions.begin_time);
+    auto execution = cse::load_ssp(*uriResolver, sspDir, runOptions.begin_time).first;
 
     // NOTE: The use of absolute() here is a workaround for cse-core issue #310.
     const auto outputDir =
