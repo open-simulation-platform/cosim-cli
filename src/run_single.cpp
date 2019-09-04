@@ -58,13 +58,13 @@ namespace
 
 struct variable_values
 {
-    boost::container::vector<cse::variable_index> realVariables;
+    boost::container::vector<cse::value_reference> realVariables;
     boost::container::vector<double> realValues;
-    boost::container::vector<cse::variable_index> integerVariables;
+    boost::container::vector<cse::value_reference> integerVariables;
     boost::container::vector<int> integerValues;
-    boost::container::vector<cse::variable_index> booleanVariables;
+    boost::container::vector<cse::value_reference> booleanVariables;
     boost::container::vector<bool> booleanValues;
-    boost::container::vector<cse::variable_index> stringVariables;
+    boost::container::vector<cse::value_reference> stringVariables;
     boost::container::vector<std::string> stringValues;
 };
 
@@ -104,15 +104,15 @@ variable_values parse_initial_values(
         try {
             switch (var.type) {
                 case cse::variable_type::real:
-                    values.realVariables.push_back(var.index);
+                    values.realVariables.push_back(var.reference);
                     values.realValues.push_back(boost::lexical_cast<double>(value));
                     break;
                 case cse::variable_type::integer:
-                    values.integerVariables.push_back(var.index);
+                    values.integerVariables.push_back(var.reference);
                     values.integerValues.push_back(boost::lexical_cast<int>(value));
                     break;
                 case cse::variable_type::boolean:
-                    values.booleanVariables.push_back(var.index);
+                    values.booleanVariables.push_back(var.reference);
                     if (value == "true") {
                         values.booleanValues.push_back(true);
                     } else if (value == "false") {
@@ -122,7 +122,7 @@ variable_values parse_initial_values(
                     }
                     break;
                 case cse::variable_type::string:
-                    values.stringVariables.push_back(var.index);
+                    values.stringVariables.push_back(var.reference);
                     values.stringValues.push_back(std::string(value));
                     break;
                 default:
@@ -162,20 +162,20 @@ public:
         for (const auto& var : simulator_->model_description().get().variables) {
             switch (var.type) {
                 case cse::variable_type::real:
-                    realVarHeader << ',' << var.name << " [" << var.index << ' ' << var.type << ' ' << var.causality << ']';
-                    realVariables_.push_back(var.index);
+                    realVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
+                    realVariables_.push_back(var.reference);
                     break;
                 case cse::variable_type::integer:
-                    integerVarHeader << ',' << var.name << " [" << var.index << ' ' << var.type << ' ' << var.causality << ']';
-                    integerVariables_.push_back(var.index);
+                    integerVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
+                    integerVariables_.push_back(var.reference);
                     break;
                 case cse::variable_type::boolean:
-                    booleanVarHeader << ',' << var.name << " [" << var.index << ' ' << var.type << ' ' << var.causality << ']';
-                    booleanVariables_.push_back(var.index);
+                    booleanVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
+                    booleanVariables_.push_back(var.reference);
                     break;
                 case cse::variable_type::string:
-                    stringVarHeader << ',' << var.name << " [" << var.index << ' ' << var.type << ' ' << var.causality << ']';
-                    stringVariables_.push_back(var.index);
+                    stringVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
+                    stringVariables_.push_back(var.reference);
                     break;
                 default:
                     assert(false);
@@ -218,10 +218,10 @@ private:
     std::shared_ptr<cse::async_slave> simulator_;
     std::ofstream outputStream_;
 
-    boost::container::vector<cse::variable_index> realVariables_;
-    boost::container::vector<cse::variable_index> integerVariables_;
-    boost::container::vector<cse::variable_index> booleanVariables_;
-    boost::container::vector<cse::variable_index> stringVariables_;
+    boost::container::vector<cse::value_reference> realVariables_;
+    boost::container::vector<cse::value_reference> integerVariables_;
+    boost::container::vector<cse::value_reference> booleanVariables_;
+    boost::container::vector<cse::value_reference> stringVariables_;
 };
 
 
