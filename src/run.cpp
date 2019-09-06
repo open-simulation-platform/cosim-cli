@@ -78,20 +78,19 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
     const auto runOptions = get_common_run_options(args);
 
     const auto uriResolver = cse::default_model_uri_resolver();
-    // NOTE: The use of absolute() here is a workaround for cse-core issue #309.
-    const auto sspDir = boost::filesystem::absolute(args["ssp_dir"].as<std::string>());
-    auto execution = cse::load_ssp(*uriResolver, sspDir, runOptions.begin_time).first;
-
-    // NOTE: The use of absolute() here is a workaround for cse-core issue #310.
-    const auto outputDir =
-        boost::filesystem::absolute(args["output-dir"].as<std::string>());
-    execution.add_observer(std::make_shared<cse::file_observer>(outputDir));
-
+    auto execution = cse::load_ssp(
+        *uriResolver,
+        args["ssp_dir"].as<std::string>(),
+        runOptions.begin_time)
+                         .first;
     if (runOptions.rtf_target) {
         execution.set_real_time_factor_target(*runOptions.rtf_target);
         execution.enable_real_time_simulation();
     }
 
+    execution.add_observer(
+        std::make_shared<cse::file_observer>(
+            args["output-dir"].as<std::string>()));
     execution.add_observer(
         std::make_shared<progress_monitor>(
             runOptions.begin_time,

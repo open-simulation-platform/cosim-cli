@@ -50,7 +50,7 @@ void print_variable_descriptions(const cse::model_description& md)
     for (const auto& v : md.variables) {
         std::cout
             << "  - " << std::setw(keyWidth) << "name:" << v.name << '\n'
-            << "    " << std::setw(keyWidth) << "reference:" << v.index << '\n'
+            << "    " << std::setw(keyWidth) << "reference:" << v.reference << '\n'
             << "    " << std::setw(keyWidth) << "type:" << v.type << '\n'
             << "    " << std::setw(keyWidth) << "causality:" << v.causality << '\n'
             << "    " << std::setw(keyWidth) << "variability:" << v.variability << '\n';
