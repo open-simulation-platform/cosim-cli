@@ -1,5 +1,7 @@
 #include "inspect.hpp"
 
+#include "cache.hpp"
+
 #include <boost/filesystem.hpp>
 #include <cse/orchestration.hpp>
 #include <cse/uri.hpp>
@@ -91,7 +93,7 @@ int inspect_subcommand::run(const boost::program_options::variables_map& args) c
     const auto uriReference = cse::uri(uriOrPath);
 #endif
 
-    const auto uriResolver = cse::default_model_uri_resolver();
+    const auto uriResolver = caching_model_uri_resolver();
     const auto model = uriResolver->lookup_model(baseUri, uriReference);
     print_model_description(*model->description());
     if (args.count("no-vars") == 0) {

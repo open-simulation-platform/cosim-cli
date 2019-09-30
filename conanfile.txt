@@ -1,5 +1,5 @@
 [requires]
-cse-core/0.5.0@osp/master
+cse-core/0.5.0@osp/feature_cse-cli-11-persistent-fmu-cache
 bzip2/1.0.8@conan/stable
 
 [generators]

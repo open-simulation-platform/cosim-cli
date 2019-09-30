@@ -3,6 +3,7 @@
 #endif
 #include "run_single.hpp"
 
+#include "cache.hpp"
 #include "run_common.hpp"
 
 #include <boost/container/vector.hpp>
@@ -251,7 +252,7 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
     auto currentPath = boost::filesystem::current_path();
     currentPath += boost::filesystem::path::preferred_separator;
     const auto baseUri = cse::path_to_file_uri(currentPath);
-    const auto uriResolver = cse::default_model_uri_resolver();
+    const auto uriResolver = caching_model_uri_resolver();
     const auto model = uriResolver->lookup_model(
         baseUri,
         args["uri_or_path"].as<std::string>());
