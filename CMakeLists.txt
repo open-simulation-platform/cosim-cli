@@ -52,6 +52,8 @@ add_executable(cse
     "src/run_common.cpp"
     "src/run_single.hpp"
     "src/run_single.cpp"
+    "src/tools.hpp"
+    "src/tools.cpp"
     "src/version_option.hpp"
     "src/version_option.cpp"
 )
