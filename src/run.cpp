@@ -3,6 +3,7 @@
 #include "run_common.hpp"
 
 #include <boost/filesystem.hpp>
+#include <cse/cse_config_parser.hpp>
 #include <cse/observer/file_observer.hpp>
 #include <cse/observer/observer.hpp>
 #include <cse/orchestration.hpp>
@@ -23,19 +24,53 @@ void run_subcommand::setup_options(
     options.add_options()
         ("output-dir",
             boost::program_options::value<std::string>()->default_value("."),
-            "The path to a directory for storing simulation results.");
+            "The path to a directory for storing simulation results.")
+        ("schema-path",
+            boost::program_options::value<std::string>(),
+            "(TEMPORARY)  "
+            "The path to the OSP XML schema file (OspSystemStructure.xsd).  "
+            "This option will be removed in the future and replaced with "
+            "an automatic mechanism for obtaining the schema.");
     positionalOptions.add_options()
-        ("ssp_dir",
+        ("system_structure_path",
             boost::program_options::value<std::string>()->required(),
-            "The path to an SSP directory, i.e., a directory that contains "
-            "an SSD file named 'SystemStructure.ssd'.");
+            "The path to the system structure definition file/directory.  "
+            "This may be an XML file in the OSP configuration format, "
+            "a directory that contains a file named OspSystemStructure.xml "
+            "in the same format, "
+            "or a directory that contains a SystemStructure.ssd file in "
+            "the SSP format.");
     // clang-format on
-    positions.add("ssp_dir", 1);
+    positions.add("system_structure_path", 1);
 }
 
 
 namespace
 {
+cse::execution load_system_structure(
+    const boost::filesystem::path& path,
+    const boost::filesystem::path& schemaFile,
+    cse::model_uri_resolver& uriResolver,
+    cse::time_point startTime)
+{
+    if (boost::filesystem::is_directory(path) &&
+        boost::filesystem::exists(path / "SystemStructure.ssd")) {
+        return cse::load_ssp(
+            uriResolver,
+            path,
+            startTime)
+            .first;
+    } else {
+        return cse::load_cse_config(
+            uriResolver,
+            boost::filesystem::absolute(path), // cse-core#407 workaround
+            schemaFile,
+            startTime)
+            .first;
+    }
+}
+
+
 class progress_monitor : public cse::observer
 {
 public:
@@ -77,12 +112,22 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
 {
     const auto runOptions = get_common_run_options(args);
 
+    const auto systemStructurePath =
+        boost::filesystem::path(args["system_structure_path"].as<std::string>());
+    const auto systemStructureDir =
+        boost::filesystem::is_directory(systemStructurePath)
+            ? systemStructurePath
+            : systemStructurePath.parent_path();
+    const auto schemaFile = args.count("schema-path")
+        ? boost::filesystem::path(args["schema-path"].as<std::string>())
+        : systemStructureDir / "OspSystemStructure.xsd";
+
     const auto uriResolver = cse::default_model_uri_resolver();
-    auto execution = cse::load_ssp(
+    auto execution = load_system_structure(
+        systemStructurePath,
+        schemaFile,
         *uriResolver,
-        args["ssp_dir"].as<std::string>(),
-        runOptions.begin_time)
-                         .first;
+        runOptions.begin_time);
     if (runOptions.rtf_target) {
         execution.set_real_time_factor_target(*runOptions.rtf_target);
         execution.enable_real_time_simulation();
