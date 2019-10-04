@@ -35,11 +35,11 @@ void run_subcommand::setup_options(
         ("system_structure_path",
             boost::program_options::value<std::string>()->required(),
             "The path to the system structure definition file/directory.  "
-            "This may be an XML file in the OSP configuration format, "
-            "a directory that contains a file named OspSystemStructure.xml "
-            "in the same format, "
-            "or a directory that contains a SystemStructure.ssd file in "
-            "the SSP format.");
+            "If this is a file with .ssd extension, or a directory that "
+            "contains a file named SystemStructure.ssd, "
+            "it will be interpreted as an SSP system structure definition.  "
+            "Otherwise, "
+            "it will be interpreted as a CSE system structure definition.");
     // clang-format on
     positions.add("system_structure_path", 1);
 }
@@ -53,8 +53,9 @@ cse::execution load_system_structure(
     cse::model_uri_resolver& uriResolver,
     cse::time_point startTime)
 {
-    if (boost::filesystem::is_directory(path) &&
-        boost::filesystem::exists(path / "SystemStructure.ssd")) {
+    if (path.extension() == ".ssd" ||
+        (boost::filesystem::is_directory(path) &&
+            boost::filesystem::exists(path / "SystemStructure.ssd"))) {
         return cse::load_ssp(
             uriResolver,
             path,
@@ -116,8 +117,8 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
         boost::filesystem::path(args["system_structure_path"].as<std::string>());
     const auto systemStructureDir =
         boost::filesystem::is_directory(systemStructurePath)
-            ? systemStructurePath
-            : systemStructurePath.parent_path();
+        ? systemStructurePath
+        : systemStructurePath.parent_path();
     const auto schemaFile = args.count("schema-path")
         ? boost::filesystem::path(args["schema-path"].as<std::string>())
         : systemStructureDir / "OspSystemStructure.xsd";
