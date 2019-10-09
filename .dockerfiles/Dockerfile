@@ -8,6 +8,7 @@ RUN apt-get update && \
     doxygen \
     git \
     flex \
+    patchelf \
     python3-setuptools \
     python3-wheel \
     python3-pip \
