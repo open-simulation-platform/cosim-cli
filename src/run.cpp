@@ -29,11 +29,11 @@ void run_subcommand::setup_options(
         ("system_structure_path",
             boost::program_options::value<std::string>()->required(),
             "The path to the system structure definition file/directory.  "
-            "If this is a file with .ssd extension, or a directory that "
-            "contains a file named SystemStructure.ssd, "
-            "it will be interpreted as an SSP system structure definition.  "
+            "If this is a file with .xml extension, or a directory that "
+            "contains a file named OspSystemStructure.xml, "
+            "it will be interpreted as a OSP system structure definition.  "
             "Otherwise, "
-            "it will be interpreted as a CSE system structure definition.");
+            "it will be interpreted as an SSP system structure definition.");
     // clang-format on
     positions.add("system_structure_path", 1);
 }
@@ -46,12 +46,12 @@ cse::execution load_system_structure(
     cse::model_uri_resolver& uriResolver,
     cse::time_point startTime)
 {
-    if (path.extension() == ".ssd" ||
+    if (path.extension() == ".xml" ||
         (boost::filesystem::is_directory(path) &&
-            boost::filesystem::exists(path / "SystemStructure.ssd"))) {
-        return cse::load_ssp(uriResolver, path, startTime).first;
-    } else {
+            boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
         return cse::load_cse_config(uriResolver, path, startTime).first;
+    } else {
+        return cse::load_ssp(uriResolver, path, startTime).first;
     }
 }
 
