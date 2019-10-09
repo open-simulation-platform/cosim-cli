@@ -39,6 +39,7 @@ pipeline {
                                     bat 'conan install ../ -s build_type=Release -o cse-core:fmuproxy=True -b missing'
                                     bat 'cmake -G "Visual Studio 15 2017 Win64" ../'
                                     bat 'cmake --build . --config Release'
+                                    bat 'cmake --build . --config Release --target install'
                                 }
                             }
                         }
