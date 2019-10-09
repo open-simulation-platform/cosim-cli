@@ -68,6 +68,16 @@ pipeline {
                             }
                         }
                     }
+                    post {
+                        cleanup {
+                            dir('debug-build') {
+                                deleteDir();
+                            }
+                            dir('release-build') {
+                                deleteDir();
+                            }
+                        }
+                    }
                 }
                 stage ( 'Build on Linux' ) {
                     agent {
