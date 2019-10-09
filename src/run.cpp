@@ -49,17 +49,9 @@ cse::execution load_system_structure(
     if (path.extension() == ".ssd" ||
         (boost::filesystem::is_directory(path) &&
             boost::filesystem::exists(path / "SystemStructure.ssd"))) {
-        return cse::load_ssp(
-            uriResolver,
-            path,
-            startTime)
-            .first;
+        return cse::load_ssp(uriResolver, path, startTime).first;
     } else {
-        return cse::load_cse_config(
-            uriResolver,
-            boost::filesystem::absolute(path), // cse-core#407 workaround
-            startTime)
-            .first;
+        return cse::load_cse_config(uriResolver, path, startTime).first;
     }
 }
 
