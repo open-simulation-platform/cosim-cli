@@ -24,13 +24,7 @@ void run_subcommand::setup_options(
     options.add_options()
         ("output-dir",
             boost::program_options::value<std::string>()->default_value("."),
-            "The path to a directory for storing simulation results.")
-        ("schema-path",
-            boost::program_options::value<std::string>(),
-            "(TEMPORARY)  "
-            "The path to the OSP XML schema file (OspSystemStructure.xsd).  "
-            "This option will be removed in the future and replaced with "
-            "an automatic mechanism for obtaining the schema.");
+            "The path to a directory for storing simulation results.");
     positionalOptions.add_options()
         ("system_structure_path",
             boost::program_options::value<std::string>()->required(),
@@ -49,7 +43,6 @@ namespace
 {
 cse::execution load_system_structure(
     const boost::filesystem::path& path,
-    const boost::filesystem::path& schemaFile,
     cse::model_uri_resolver& uriResolver,
     cse::time_point startTime)
 {
@@ -65,7 +58,6 @@ cse::execution load_system_structure(
         return cse::load_cse_config(
             uriResolver,
             boost::filesystem::absolute(path), // cse-core#407 workaround
-            schemaFile,
             startTime)
             .first;
     }
@@ -119,14 +111,10 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
         boost::filesystem::is_directory(systemStructurePath)
         ? systemStructurePath
         : systemStructurePath.parent_path();
-    const auto schemaFile = args.count("schema-path")
-        ? boost::filesystem::path(args["schema-path"].as<std::string>())
-        : systemStructureDir / "OspSystemStructure.xsd";
 
     const auto uriResolver = cse::default_model_uri_resolver();
     auto execution = load_system_structure(
         systemStructurePath,
-        schemaFile,
         *uriResolver,
         runOptions.begin_time);
     if (runOptions.rtf_target) {
