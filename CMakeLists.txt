@@ -17,6 +17,11 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_definitions("-D_SCL_SECURE_NO_WARNINGS" "-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+else()
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
 
 # ==============================================================================
 # Dependencies
@@ -31,7 +36,6 @@ endif()
 
 find_package(csecore REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
-
 
 # ==============================================================================
 # Targets
@@ -63,11 +67,9 @@ target_link_libraries(cse
         csecore::csecorecpp
         Boost::program_options)
 
-if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
-else()
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
-endif()
+# ==============================================================================
+# Installation
+# ==============================================================================
 
 install(TARGETS cse RUNTIME DESTINATION bin)
 include(InstallRequiredSystemLibraries)

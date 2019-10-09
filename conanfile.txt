@@ -17,7 +17,6 @@ bin, boost_program_options*.dll    -> ./dist/bin
 bin, boost_system*.dll             -> ./dist/bin
 bin, boost_thread*.dll             -> ./dist/bin
 bin, csecorecpp.dll                -> ./dist/bin
-bin, zip.dll                       -> ./dist/bin
 
 lib, libboost_chrono.so.*          -> ./dist/lib
 lib, libboost_context.so.*         -> ./dist/lib
@@ -27,6 +26,5 @@ lib, libboost_filesystem.so.*      -> ./dist/lib
 lib, libboost_log.so.*             -> ./dist/lib
 lib, libboost_program_options.so.* -> ./dist/lib
 lib, libboost_system.so.*          -> ./dist/lib
-lib, libboost_thread.so*           -> ./dist/lib
-lib, libcsecorcpp.so               -> ./dist/lib
-lib, libzip.so*                    -> ./dist/lib
+lib, libboost_thread.so.*          -> ./dist/lib
+lib, libcsecorecpp.so              -> ./dist/lib
