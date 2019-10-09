@@ -1,5 +1,5 @@
 [requires]
-cse-core/0.5.0@osp/master
+cse-core/0.5.0@osp/v0.5.0
 bzip2/1.0.8@conan/stable
 
 [generators]
