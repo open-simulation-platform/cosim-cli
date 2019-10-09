@@ -127,7 +127,7 @@ pipeline {
                             steps {
                                 dir ('release-build/dist') {
                                     zip (
-                                        zipFile: "cse-cli-linux.tar.gz",
+                                        zipFile: "cse-cli-linux.zip",
                                         archive: true
                                     )
                                 }
@@ -138,7 +138,7 @@ pipeline {
                             steps {
                                 dir ('release-build/dist') {
                                     zip (
-                                        zipFile: "cse-cli-${env.TAG_NAME}-linux.tar.gz",
+                                        zipFile: "cse-cli-${env.TAG_NAME}-linux.zip",
                                         archive: true
                                     )
                                 }
