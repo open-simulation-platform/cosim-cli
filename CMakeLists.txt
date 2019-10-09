@@ -63,5 +63,11 @@ target_link_libraries(cse
         csecore::csecorecpp
         Boost::program_options)
 
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+else()
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
+
 install(TARGETS cse RUNTIME DESTINATION bin)
 include(InstallRequiredSystemLibraries)

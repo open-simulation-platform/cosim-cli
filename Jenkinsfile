@@ -115,14 +115,42 @@ pipeline {
                                     sh 'conan install ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -o cse-core:fmuproxy=True -b missing'
                                     sh 'cmake -DCMAKE_BUILD_TYPE=Release ../'
                                     sh 'cmake --build .'
+                                    sh 'cmake --build . --target install'
                                 }
                             }
-                            post {
-                                success {
-                                    dir('release-build') {
-                                        archiveArtifacts artifacts: 'cse',  fingerprint: true
-                                    }
+                        }
+                        stage ('Zip dist') {
+                            when {
+                                not { buildingTag() }
+                            }
+                            steps {
+                                dir ('release-build/dist') {
+                                    zip (
+                                        zipFile: "cse-cli-linux.tar.gz",
+                                        archive: true
+                                    )
                                 }
+                            }
+                        }
+                        stage ('Zip release') {
+                            when { buildingTag() }
+                            steps {
+                                dir ('release-build/dist') {
+                                    zip (
+                                        zipFile: "cse-cli-${env.TAG_NAME}-linux.tar.gz",
+                                        archive: true
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    post {
+                        cleanup {
+                            dir('debug-build') {
+                                deleteDir();
+                            }
+                            dir('release-build') {
+                                deleteDir();
                             }
                         }
                     }
