@@ -20,9 +20,9 @@ public:
 
     std::string long_description() const noexcept override
     {
-        return "This command runs a simulation based on an SSP configuration "
-               "that specifies which models to include and the connections "
-               "between them.\n"
+        return "This command runs a simulation based on a configuration file "
+               "that specifies the system structure, i.e., which models to "
+               "include and the connections between them.\n"
                "\n"
                "The simulation can be synchronised with real time by using the "
                "the '--real-time' option, optionally specifying a target real-"

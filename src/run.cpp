@@ -3,6 +3,7 @@
 #include "run_common.hpp"
 
 #include <boost/filesystem.hpp>
+#include <cse/cse_config_parser.hpp>
 #include <cse/observer/file_observer.hpp>
 #include <cse/observer/observer.hpp>
 #include <cse/orchestration.hpp>
@@ -25,17 +26,36 @@ void run_subcommand::setup_options(
             boost::program_options::value<std::string>()->default_value("."),
             "The path to a directory for storing simulation results.");
     positionalOptions.add_options()
-        ("ssp_dir",
+        ("system_structure_path",
             boost::program_options::value<std::string>()->required(),
-            "The path to an SSP directory, i.e., a directory that contains "
-            "an SSD file named 'SystemStructure.ssd'.");
+            "The path to the system structure definition file/directory.  "
+            "If this is a file with .xml extension, or a directory that "
+            "contains a file named OspSystemStructure.xml, "
+            "it will be interpreted as a OSP system structure definition.  "
+            "Otherwise, "
+            "it will be interpreted as an SSP system structure definition.");
     // clang-format on
-    positions.add("ssp_dir", 1);
+    positions.add("system_structure_path", 1);
 }
 
 
 namespace
 {
+cse::execution load_system_structure(
+    const boost::filesystem::path& path,
+    cse::model_uri_resolver& uriResolver,
+    cse::time_point startTime)
+{
+    if (path.extension() == ".xml" ||
+        (boost::filesystem::is_directory(path) &&
+            boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
+        return cse::load_cse_config(uriResolver, path, startTime).first;
+    } else {
+        return cse::load_ssp(uriResolver, path, startTime).first;
+    }
+}
+
+
 class progress_monitor : public cse::observer
 {
 public:
@@ -76,13 +96,14 @@ private:
 int run_subcommand::run(const boost::program_options::variables_map& args) const
 {
     const auto runOptions = get_common_run_options(args);
+    const auto systemStructurePath =
+        boost::filesystem::path(args["system_structure_path"].as<std::string>());
 
     const auto uriResolver = cse::default_model_uri_resolver();
-    auto execution = cse::load_ssp(
+    auto execution = load_system_structure(
+        systemStructurePath,
         *uriResolver,
-        args["ssp_dir"].as<std::string>(),
-        runOptions.begin_time)
-                         .first;
+        runOptions.begin_time);
     if (runOptions.rtf_target) {
         execution.set_real_time_factor_target(*runOptions.rtf_target);
         execution.enable_real_time_simulation();
