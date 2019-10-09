@@ -16,7 +16,7 @@ pipeline {
                     environment {
                         CONAN_USER_HOME = "${env.SLAVE_HOME}/conan-repositories/${env.EXECUTOR_NUMBER}"
                     }
-                    
+
                     stages {
                         stage('Configure Conan') {
                             steps {
@@ -113,6 +113,7 @@ pipeline {
                             steps {
                                 dir('release-build') {
                                     sh 'conan install ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -o cse-core:fmuproxy=True -b missing'
+                                    sh 'for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done'
                                     sh 'cmake -DCMAKE_BUILD_TYPE=Release ../'
                                     sh 'cmake --build .'
                                     sh 'cmake --build . --target install'
