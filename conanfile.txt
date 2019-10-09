@@ -5,3 +5,28 @@ bzip2/1.0.8@conan/stable
 [generators]
 cmake
 virtualrunenv
+
+[imports]
+bin, boost_chrono*.dll             -> ./dist/bin
+bin, boost_context*.dll            -> ./dist/bin
+bin, boost_date_time*.dll          -> ./dist/bin
+bin, boost_fiber*.dll              -> ./dist/bin
+bin, boost_filesystem*.dll         -> ./dist/bin
+bin, boost_log*.dll                -> ./dist/bin
+bin, boost_program_options*.dll    -> ./dist/bin
+bin, boost_system*.dll             -> ./dist/bin
+bin, boost_thread*.dll             -> ./dist/bin
+bin, csecorecpp.dll                -> ./dist/bin
+bin, zip.dll                       -> ./dist/bin
+
+lib, libboost_chrono.so.*          -> ./dist/lib
+lib, libboost_context.so.*         -> ./dist/lib
+lib, libboost_date_time.so.*       -> ./dist/lib
+lib, libboost_fiber.so.*           -> ./dist/lib
+lib, libboost_filesystem.so.*      -> ./dist/lib
+lib, libboost_log.so.*             -> ./dist/lib
+lib, libboost_program_options.so.* -> ./dist/bin
+lib, libboost_system.so.*          -> ./dist/lib
+lib, libboost_thread.so*           -> ./dist/lib
+lib, libcsecorcpp.so               -> ./dist/lib
+lib, libzip.so*                    -> ./dist/lib
