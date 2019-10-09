@@ -27,7 +27,7 @@ pipeline {
                         stage('Build Debug') {
                             steps {
                                 dir('debug-build') {
-                                    bat 'conan install ../ -s build_type=Debug -b missing'
+                                    bat 'conan install -u ../ -s build_type=Debug -b missing'
                                     bat 'cmake -G "Visual Studio 15 2017 Win64" ../'
                                     bat 'cmake --build . --config Debug'
                                 }
@@ -36,7 +36,7 @@ pipeline {
                         stage('Build Release') {
                             steps {
                                 dir('release-build') {
-                                    bat 'conan install ../ -s build_type=Release -o cse-core:fmuproxy=True -b missing'
+                                    bat 'conan install -u ../ -s build_type=Release -o cse-core:fmuproxy=True -b missing'
                                     bat 'cmake -G "Visual Studio 15 2017 Win64" ../'
                                     bat 'cmake --build . --config Release'
                                     bat 'cmake --build . --config Release --target install'
@@ -103,7 +103,7 @@ pipeline {
                         stage('Build Debug') {
                             steps {
                                 dir('debug-build') {
-                                    sh 'conan install ../ -s compiler.libcxx=libstdc++11 -s build_type=Debug -b missing'
+                                    sh 'conan install -u ../ -s compiler.libcxx=libstdc++11 -s build_type=Debug -b missing'
                                     sh 'cmake -DCMAKE_BUILD_TYPE=Debug ../'
                                     sh 'cmake --build .'
                                 }
@@ -112,7 +112,7 @@ pipeline {
                         stage('Build Release') {
                             steps {
                                 dir('release-build') {
-                                    sh 'conan install ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -o cse-core:fmuproxy=True -b missing'
+                                    sh 'conan install -u ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -o cse-core:fmuproxy=True -b missing'
                                     sh 'for f in dist/lib/*; do patchelf --set-rpath \\$ORIGIN $f; done'
                                     sh 'cmake -DCMAKE_BUILD_TYPE=Release ../'
                                     sh 'cmake --build .'
