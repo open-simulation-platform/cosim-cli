@@ -25,7 +25,7 @@ lib, libboost_date_time.so.*       -> ./dist/lib
 lib, libboost_fiber.so.*           -> ./dist/lib
 lib, libboost_filesystem.so.*      -> ./dist/lib
 lib, libboost_log.so.*             -> ./dist/lib
-lib, libboost_program_options.so.* -> ./dist/bin
+lib, libboost_program_options.so.* -> ./dist/lib
 lib, libboost_system.so.*          -> ./dist/lib
 lib, libboost_thread.so*           -> ./dist/lib
 lib, libcsecorcpp.so               -> ./dist/lib
