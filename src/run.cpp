@@ -96,13 +96,8 @@ private:
 int run_subcommand::run(const boost::program_options::variables_map& args) const
 {
     const auto runOptions = get_common_run_options(args);
-
     const auto systemStructurePath =
         boost::filesystem::path(args["system_structure_path"].as<std::string>());
-    const auto systemStructureDir =
-        boost::filesystem::is_directory(systemStructurePath)
-        ? systemStructurePath
-        : systemStructurePath.parent_path();
 
     const auto uriResolver = cse::default_model_uri_resolver();
     auto execution = load_system_structure(
