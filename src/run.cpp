@@ -22,6 +22,18 @@ void run_subcommand::setup_options(
     setup_common_run_options(options);
     // clang-format off
     options.add_options()
+        ("output-config",
+            boost::program_options::value<std::string>()->default_value("auto"),
+            "The path to an XML file that contains configuration settings "
+            "for simulation output, "
+            "or one of the special values 'auto', 'all' and 'none'.  "
+            "The default is 'auto', "
+            "which causes the program to look for a file named 'LogConfig.xml' "
+            "in the same directory as the system structure definition file.  "
+            "If no such file is found, the effect is the same as for 'all', "
+            "meaning that the values of all variables are stored for each "
+            "time step.  "
+            "'none' disables file output altogether.")
         ("output-dir",
             boost::program_options::value<std::string>()->default_value("."),
             "The path to a directory for storing simulation results.");
@@ -52,6 +64,32 @@ cse::execution load_system_structure(
         return cse::load_cse_config(uriResolver, path, startTime).first;
     } else {
         return cse::load_ssp(uriResolver, path, startTime).first;
+    }
+}
+
+
+std::unique_ptr<cse::observer> make_file_observer(
+    const boost::filesystem::path& outputDir,
+    const std::string& outputConfigArg,
+    const boost::filesystem::path& systemStructurePath)
+{
+    if (outputConfigArg == "auto") {
+        const auto systemStructureDir =
+            boost::filesystem::is_directory(systemStructurePath)
+            ? systemStructurePath
+            : systemStructurePath.parent_path();
+        const auto autoConfigFile = systemStructureDir / "LogConfig.xml";
+        if (boost::filesystem::exists(autoConfigFile)) {
+            return std::make_unique<cse::file_observer>(outputDir, autoConfigFile);
+        } else {
+            return std::make_unique<cse::file_observer>(outputDir);
+        }
+    } else if (outputConfigArg == "all") {
+        return std::make_unique<cse::file_observer>(outputDir);
+    } else if (outputConfigArg == "none") {
+        return nullptr;
+    } else {
+        return std::make_unique<cse::file_observer>(outputDir, outputConfigArg);
     }
 }
 
@@ -109,9 +147,12 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
         execution.enable_real_time_simulation();
     }
 
-    execution.add_observer(
-        std::make_shared<cse::file_observer>(
-            args["output-dir"].as<std::string>()));
+    auto outputObserver = make_file_observer(
+        args["output-dir"].as<std::string>(),
+        args["output-config"].as<std::string>(),
+        systemStructurePath);
+    if (outputObserver) execution.add_observer(std::move(outputObserver));
+
     execution.add_observer(
         std::make_shared<progress_monitor>(
             runOptions.begin_time,
