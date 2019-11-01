@@ -1,6 +1,5 @@
 [requires]
-cse-core/0.5.0@osp/v0.5.0
-bzip2/1.0.8@conan/stable
+cse-core/0.5.1@osp/v0.5.1
 
 [generators]
 cmake
