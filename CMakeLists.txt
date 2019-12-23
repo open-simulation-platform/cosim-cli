@@ -41,6 +41,10 @@ find_package(Boost REQUIRED COMPONENTS program_options)
 # Targets
 # ==============================================================================
 
+set(generatedFilesDir "${CMAKE_BINARY_DIR}/generated")
+file(WRITE "${generatedFilesDir}/project_version_from_cmake.hpp"
+    "constexpr const char* project_version = \"${CMAKE_PROJECT_VERSION}\";\n")
+
 add_executable(cse
     "src/cli_application.hpp"
     "src/cli_application.cpp"
@@ -62,6 +66,7 @@ add_executable(cse
     "src/version_option.hpp"
     "src/version_option.cpp"
 )
+target_include_directories(cse PRIVATE "${generatedFilesDir}")
 target_link_libraries(cse
     PRIVATE
         csecore::csecorecpp
