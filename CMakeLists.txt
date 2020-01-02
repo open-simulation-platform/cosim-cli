@@ -43,7 +43,7 @@ find_package(Boost REQUIRED COMPONENTS program_options)
 
 set(generatedFilesDir "${CMAKE_BINARY_DIR}/generated")
 file(WRITE "${generatedFilesDir}/project_version_from_cmake.hpp"
-    "constexpr const char* project_version = \"${CMAKE_PROJECT_VERSION}\";\n")
+    "constexpr const char* project_version = \"${PROJECT_VERSION}\";\n")
 
 add_executable(cse
     "src/cli_application.hpp"
