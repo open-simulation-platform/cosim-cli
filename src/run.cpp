@@ -111,6 +111,13 @@ private:
     void variables_connected(cse::variable_id, cse::variable_id, cse::time_point) override {}
     void variable_disconnected(cse::variable_id, cse::time_point) override {}
 
+    void simulation_initialized(
+        cse::step_number /*firstStep*/,
+        cse::time_point startTime) override
+    {
+        logger_.update(startTime);
+    }
+
     void step_complete(
         cse::step_number /*lastStep*/,
         cse::duration /*lastStepSize*/,
