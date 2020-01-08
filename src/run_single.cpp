@@ -1,10 +1,11 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(NOMINMAX)
 #    define NOMINMAX
 #endif
 #include "run_single.hpp"
 
 #include "cache.hpp"
 #include "run_common.hpp"
+#include "tools.hpp"
 
 #include <boost/container/vector.hpp>
 #include <boost/filesystem.hpp>
@@ -252,10 +253,9 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
     auto currentPath = boost::filesystem::current_path();
     currentPath += boost::filesystem::path::preferred_separator;
     const auto baseUri = cse::path_to_file_uri(currentPath);
+    const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
     const auto uriResolver = caching_model_uri_resolver();
-    const auto model = uriResolver->lookup_model(
-        baseUri,
-        args["uri_or_path"].as<std::string>());
+    const auto model = uriResolver->lookup_model(baseUri, uriReference);
 
     std::optional<variable_values> initialValues;
     if (args.count("initial_value") > 0) {

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
-project("cse-cli" VERSION "0.1.0")
+project("cse-cli" VERSION "0.2.0")
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 
 # ==============================================================================
 # Global internal configuration
@@ -16,6 +17,11 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_definitions("-D_SCL_SECURE_NO_WARNINGS" "-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+else()
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+endif()
 
 # ==============================================================================
 # Dependencies
@@ -31,10 +37,13 @@ endif()
 find_package(csecore REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
 
-
 # ==============================================================================
 # Targets
 # ==============================================================================
+
+set(generatedFilesDir "${CMAKE_BINARY_DIR}/generated")
+file(WRITE "${generatedFilesDir}/project_version_from_cmake.hpp"
+    "constexpr const char* project_version = \"${PROJECT_VERSION}\";\n")
 
 add_executable(cse
     "src/cache.hpp"
@@ -56,10 +65,20 @@ add_executable(cse
     "src/run_common.cpp"
     "src/run_single.hpp"
     "src/run_single.cpp"
+    "src/tools.hpp"
+    "src/tools.cpp"
     "src/version_option.hpp"
     "src/version_option.cpp"
 )
+target_include_directories(cse PRIVATE "${generatedFilesDir}")
 target_link_libraries(cse
     PRIVATE
         csecore::csecorecpp
         Boost::program_options)
+
+# ==============================================================================
+# Installation
+# ==============================================================================
+
+install(TARGETS cse RUNTIME DESTINATION bin)
+include(InstallRequiredSystemLibraries)

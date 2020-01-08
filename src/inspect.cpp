@@ -1,14 +1,12 @@
 #include "inspect.hpp"
 
 #include "cache.hpp"
+#include "tools.hpp"
 
 #include <boost/filesystem.hpp>
 #include <cse/orchestration.hpp>
 #include <cse/uri.hpp>
 
-#ifdef _WIN32
-#    include <cctype>
-#endif
 #include <iomanip>
 #include <iostream>
 
@@ -63,16 +61,6 @@ void print_variable_descriptions(const cse::model_description& md)
     }
 }
 
-#ifdef _WIN32
-bool looks_like_path(std::string_view str)
-{
-    return str.size() > 2 &&
-        std::isalpha(static_cast<unsigned char>(str[0])) &&
-        str[1] == ':' &&
-        (str[2] == '\\' || str[2] == '/');
-}
-#endif
-
 } // namespace
 
 
@@ -81,18 +69,7 @@ int inspect_subcommand::run(const boost::program_options::variables_map& args) c
     auto currentPath = boost::filesystem::current_path();
     currentPath += boost::filesystem::path::preferred_separator;
     const auto baseUri = cse::path_to_file_uri(currentPath);
-
-    // On Windows, we treat anything that starts with "X:\" as a path,
-    // even though it could in principle be a URI with scheme "X".
-    const auto uriOrPath = args["uri_or_path"].as<std::string>();
-#ifdef _WIN32
-    const auto uriReference = looks_like_path(uriOrPath)
-        ? cse::path_to_file_uri(uriOrPath)
-        : cse::uri(uriOrPath);
-#else
-    const auto uriReference = cse::uri(uriOrPath);
-#endif
-
+    const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
     const auto uriResolver = caching_model_uri_resolver();
     const auto model = uriResolver->lookup_model(baseUri, uriReference);
     print_model_description(*model->description());
