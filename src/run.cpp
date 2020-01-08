@@ -106,15 +106,16 @@ public:
     {}
 
 private:
-    void simulator_added(cse::simulator_index, cse::observable*, cse::time_point) {}
-    void simulator_removed(cse::simulator_index, cse::time_point) {}
-    void variables_connected(cse::variable_id, cse::variable_id, cse::time_point) {}
-    void variable_disconnected(cse::variable_id, cse::time_point) {}
+    void simulator_added(cse::simulator_index, cse::observable*, cse::time_point) override {}
+    void simulator_removed(cse::simulator_index, cse::time_point) override {}
+    void variables_connected(cse::variable_id, cse::variable_id, cse::time_point) override {}
+    void variable_disconnected(cse::variable_id, cse::time_point) override {}
 
     void step_complete(
         cse::step_number /*lastStep*/,
         cse::duration /*lastStepSize*/,
         cse::time_point currentTime)
+        override
     {
         logger_.update(currentTime);
     }
@@ -124,6 +125,7 @@ private:
         cse::step_number,
         cse::duration,
         cse::time_point)
+        override
     {}
 
     progress_logger logger_;
