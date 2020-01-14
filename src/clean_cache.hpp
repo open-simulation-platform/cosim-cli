@@ -15,26 +15,25 @@ public:
 
     std::string brief_description() const noexcept override
     {
-        return "Deletes the program cache";
+        return "Removes unused data from the program cache";
     }
 
     std::string long_description() const noexcept override
     {
-        return "This command deletes the directory that contains cached "
-               "CSE data for the current user.\n"
-               "\n"
-               "WARNING: This operation is unsafe.  "
-               "Cache deletion is not synchronised with other processes "
-               "that use the cache, "
-               "and must therefore only be performed when no such processes "
-               "are running.\n"
+        return "This command removes unused files from the directory that "
+               "contains cached CSE data for the current user.\n"
                "\n"
                "The primary use for the cache is to unpack FMUs in a "
                "persistent location, "
-               "so they don't have to be unpacked over and over.  "
-               "The most common reason to do delete it is to free up disk space, "
-               "especially if a lot of large FMUs have been used.  "
-               "Another reason might be to get rid of misbehaving FMUs.";
+               "so they don't have to be unpacked over and over for each run.  "
+               "This can be a major time saver, "
+               "especially when working with large FMUs.  "
+               "Over time, however, the cache can grow to take up "
+               "a significant amount of disk space.\n"
+               "\n"
+               "This command allows for safe removal of files from the cache.  "
+               "It will remove all files that are not currently in use by a "
+               "CSE process.";
     }
 
     void setup_options(

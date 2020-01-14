@@ -10,8 +10,8 @@
 std::shared_ptr<cse::model_uri_resolver> caching_model_uri_resolver();
 
 
-/// Deletes the application cache directory.
-void delete_cache_directory();
+/// Removes unused data from the application cache directory.
+void clean_cache();
 
 
 #endif // header guard

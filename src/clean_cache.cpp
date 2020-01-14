@@ -15,6 +15,6 @@ void clean_cache_subcommand::setup_options(
 
 int clean_cache_subcommand::run(const boost::program_options::variables_map& /*args*/) const
 {
-    delete_cache_directory();
+    clean_cache();
     return 0;
 }

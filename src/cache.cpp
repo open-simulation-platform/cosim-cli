@@ -77,16 +77,17 @@ std::shared_ptr<cse::model_uri_resolver> caching_model_uri_resolver()
 }
 
 
-void delete_cache_directory()
+void clean_cache()
 {
+    // NOTE: This makes some assumptions about how the resolver returned by
+    // `cse::default_model_uri_resolver()` implements caching.  In particular,
+    // it assumes that it uses `cse::fmi::importer`, even though this is not
+    // documented.
     if (const auto cache = cache_directory_path()) {
         BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
-            << "Removing cache directory: " << *cache;
-        const auto n = boost::filesystem::remove_all(*cache);
-        if (n == 0) {
-            BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
-                << "Cache directory empty or nonexistent; no files deleted.";
-        }
+            << "Cleaning cache directory: " << *cache;
+        const auto importer = cse::fmi::importer::create(*cache);
+        importer->clean_cache();
     } else {
         throw std::runtime_error(
             "Unable to determine user cache directory; cannot delete it.");
