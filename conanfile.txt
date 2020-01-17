@@ -1,5 +1,5 @@
 [requires]
-cse-core/0.6.0@kyllingstad/cse-cli-11
+cse-core/0.6.0@osp/feature_cse-cli-11-persistent-fmu-cache
 
 [generators]
 cmake
