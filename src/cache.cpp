@@ -81,10 +81,6 @@ std::shared_ptr<cse::model_uri_resolver> caching_model_uri_resolver()
 
 void clean_cache()
 {
-    // NOTE: This makes some assumptions about how the resolver returned by
-    // `cse::default_model_uri_resolver()` implements caching.  In particular,
-    // it assumes that it uses `cse::fmi::importer`, even though this is not
-    // documented.
     if (const auto cachePath = cache_directory_path()) {
         const auto cache = std::make_shared<cse::persistent_file_cache>(*cachePath);
         BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
