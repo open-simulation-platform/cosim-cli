@@ -1,6 +1,7 @@
 #include "cache.hpp"
 
 #include <boost/filesystem.hpp>
+#include <cse/file_cache.hpp>
 #include <cse/log/logger.hpp>
 
 #include <cstdlib>
@@ -65,10 +66,11 @@ std::optional<boost::filesystem::path> cache_directory_path()
 
 std::shared_ptr<cse::model_uri_resolver> caching_model_uri_resolver()
 {
-    if (const auto cache = cache_directory_path()) {
+    if (const auto cachePath = cache_directory_path()) {
+        const auto cache = std::make_shared<cse::persistent_file_cache>(*cachePath);
         BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
-            << "Using cache directory: " << *cache;
-        return cse::default_model_uri_resolver(&cache.value());
+            << "Using cache directory: " << *cachePath;
+        return cse::default_model_uri_resolver(cache);
     } else {
         BOOST_LOG_SEV(cse::log::logger(), cse::log::warning)
             << "Unable to determine user cache directory; caching is disabled.";
@@ -83,11 +85,11 @@ void clean_cache()
     // `cse::default_model_uri_resolver()` implements caching.  In particular,
     // it assumes that it uses `cse::fmi::importer`, even though this is not
     // documented.
-    if (const auto cache = cache_directory_path()) {
+    if (const auto cachePath = cache_directory_path()) {
+        const auto cache = std::make_shared<cse::persistent_file_cache>(*cachePath);
         BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
-            << "Cleaning cache directory: " << *cache;
-        const auto importer = cse::fmi::importer::create(*cache);
-        importer->clean_cache();
+            << "Cleaning cache directory: " << *cachePath;
+        cache->cleanup();
     } else {
         throw std::runtime_error(
             "Unable to determine user cache directory; cannot delete it.");
