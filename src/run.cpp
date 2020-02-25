@@ -64,6 +64,7 @@ cse::execution load_system_structure(
         return cse::load_cse_config(uriResolver, path, startTime).first;
     } else {
         cse::ssp_loader loader;
+        loader.set_model_uri_resolver(std::shared_ptr<cse::model_uri_resolver>(&uriResolver, [](void*) {}));
         loader.override_start_time(startTime);
         return loader.load(path).first;
     }
