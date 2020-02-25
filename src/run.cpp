@@ -7,7 +7,7 @@
 #include <cse/observer/file_observer.hpp>
 #include <cse/observer/observer.hpp>
 #include <cse/orchestration.hpp>
-#include <cse/ssp_parser.hpp>
+#include <cse/ssp/ssp_loader.hpp>
 
 #include <chrono>
 #include <memory>
@@ -63,7 +63,10 @@ cse::execution load_system_structure(
             boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
         return cse::load_cse_config(uriResolver, path, startTime).first;
     } else {
-        return cse::load_ssp(uriResolver, path, startTime).first;
+        cse::ssp_loader loader;
+        loader.set_model_uri_resolver(std::shared_ptr<cse::model_uri_resolver>(&uriResolver, [](void*) {}));
+        loader.override_start_time(startTime);
+        return loader.load(path).first;
     }
 }
 
