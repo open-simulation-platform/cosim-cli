@@ -57,11 +57,12 @@ And on Windows:
 
     mkdir build
     cd build
-    conan install ..
-    cmake .. -Ax64
+    conan install .. -s build_type=Debug -g virtualrunenv
+    cmake .. -A x64
     cmake --build .
     activate_run.bat
     Debug\cse help
+    deactivate_run.bat
 
 
 [Core Simulation Environment]: https://github.com/open-simulation-platform
