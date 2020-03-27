@@ -5,10 +5,12 @@
 
 #include <boost/filesystem.hpp>
 #include <cse/cse_config_parser.hpp>
+#include <cse/manipulator/scenario_manager.hpp>
+#include <cse/model.hpp>
 #include <cse/observer/file_observer.hpp>
 #include <cse/observer/observer.hpp>
 #include <cse/orchestration.hpp>
-#include <cse/ssp_parser.hpp>
+#include <cse/ssp/ssp_loader.hpp>
 
 #include <chrono>
 #include <memory>
@@ -37,7 +39,15 @@ void run_subcommand::setup_options(
             "'none' disables file output altogether.")
         ("output-dir",
             boost::program_options::value<std::string>()->default_value("."),
-            "The path to a directory for storing simulation results.");
+            "The path to a directory for storing simulation results.")
+        ("scenario",
+            boost::program_options::value<std::string>(),
+            "The path to a scenario file to run.  "
+            "By default, no scenario is run.")
+        ("scenario-start",
+            boost::program_options::value<double>()->default_value(0.0),
+            "The logical time at which the scenario will start.  "
+            "Only used if --scenario is specified.");
     positionalOptions.add_options()
         ("system_structure_path",
             boost::program_options::value<std::string>()->required(),
@@ -64,7 +74,10 @@ cse::execution load_system_structure(
             boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
         return cse::load_cse_config(uriResolver, path, startTime).first;
     } else {
-        return cse::load_ssp(uriResolver, path, startTime).first;
+        cse::ssp_loader loader;
+        loader.set_model_uri_resolver(std::shared_ptr<cse::model_uri_resolver>(&uriResolver, [](void*) {}));
+        loader.override_start_time(startTime);
+        return loader.load(path).first;
     }
 }
 
@@ -92,6 +105,17 @@ std::unique_ptr<cse::observer> make_file_observer(
     } else {
         return std::make_unique<cse::file_observer>(outputDir, outputConfigArg);
     }
+}
+
+
+void load_scenario(
+    cse::execution& execution,
+    const boost::filesystem::path& scenarioPath,
+    cse::time_point startTime)
+{
+    auto s = std::make_shared<cse::scenario_manager>();
+    execution.add_manipulator(s);
+    s->load_scenario(scenarioPath, startTime);
 }
 
 
@@ -162,6 +186,13 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
         args["output-config"].as<std::string>(),
         systemStructurePath);
     if (outputObserver) execution.add_observer(std::move(outputObserver));
+
+    if (args.count("scenario")) {
+        load_scenario(
+            execution,
+            args["scenario"].as<std::string>(),
+            cse::to_time_point(args["scenario-start"].as<double>()));
+    }
 
     execution.add_observer(
         std::make_shared<progress_monitor>(
