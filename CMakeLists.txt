@@ -46,6 +46,10 @@ file(WRITE "${generatedFilesDir}/project_version_from_cmake.hpp"
     "constexpr const char* project_version = \"${PROJECT_VERSION}\";\n")
 
 add_executable(cse
+    "src/cache.hpp"
+    "src/cache.cpp"
+    "src/clean_cache.hpp"
+    "src/clean_cache.cpp"
     "src/cli_application.hpp"
     "src/cli_application.cpp"
     "src/console_utils.hpp"

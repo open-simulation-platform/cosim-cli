@@ -1,3 +1,4 @@
+#include "clean_cache.hpp"
 #include "cli_application.hpp"
 #include "inspect.hpp"
 #include "logging_options.hpp"
@@ -31,6 +32,7 @@ int main(int argc, char const* const* argv)
         "The Core Simulation Environment is free and open-source software for running distributed co-simulations.");
     app.add_global_options(std::make_unique<logging_options>());
     app.add_global_options(std::make_unique<version_option>("CSE CLI", project_version));
+    app.add_subcommand(std::make_unique<clean_cache_subcommand>());
     app.add_subcommand(std::make_unique<inspect_subcommand>());
     app.add_subcommand(std::make_unique<run_subcommand>());
     app.add_subcommand(std::make_unique<run_single_subcommand>());

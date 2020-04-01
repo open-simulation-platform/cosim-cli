@@ -1,5 +1,6 @@
 #include "run.hpp"
 
+#include "cache.hpp"
 #include "run_common.hpp"
 
 #include <boost/filesystem.hpp>
@@ -170,7 +171,7 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
     const auto systemStructurePath =
         boost::filesystem::path(args["system_structure_path"].as<std::string>());
 
-    const auto uriResolver = cse::default_model_uri_resolver();
+    const auto uriResolver = caching_model_uri_resolver();
     auto execution = load_system_structure(
         systemStructurePath,
         *uriResolver,

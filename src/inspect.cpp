@@ -1,5 +1,6 @@
 #include "inspect.hpp"
 
+#include "cache.hpp"
 #include "tools.hpp"
 
 #include <boost/filesystem.hpp>
@@ -69,7 +70,7 @@ int inspect_subcommand::run(const boost::program_options::variables_map& args) c
     currentPath += boost::filesystem::path::preferred_separator;
     const auto baseUri = cse::path_to_file_uri(currentPath);
     const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
-    const auto uriResolver = cse::default_model_uri_resolver();
+    const auto uriResolver = caching_model_uri_resolver();
     const auto model = uriResolver->lookup_model(baseUri, uriReference);
     print_model_description(*model->description());
     if (args.count("no-vars") == 0) {
