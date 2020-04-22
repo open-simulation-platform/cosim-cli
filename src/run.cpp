@@ -4,6 +4,7 @@
 #include "run_common.hpp"
 
 #include <boost/filesystem.hpp>
+#include <cse/algorithm/fixed_step_algorithm.hpp>
 #include <cse/cse_config_parser.hpp>
 #include <cse/manipulator/scenario_manager.hpp>
 #include <cse/model.hpp>
@@ -64,6 +65,7 @@ void run_subcommand::setup_options(
 
 namespace
 {
+
 cse::execution load_system_structure(
     const boost::filesystem::path& path,
     cse::model_uri_resolver& uriResolver,
@@ -72,12 +74,27 @@ cse::execution load_system_structure(
     if (path.extension() == ".xml" ||
         (boost::filesystem::is_directory(path) &&
             boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
-        return cse::load_cse_config(uriResolver, path, startTime).first;
+        const auto config = cse::load_cse_config(path, uriResolver);
+        auto execution = cse::execution(
+            startTime,
+            std::make_shared<cse::fixed_step_algorithm>(config.step_size));
+        cse::inject_system_structure(
+            execution,
+            config.system_structure,
+            config.initial_values);
+        return execution;
     } else {
         cse::ssp_loader loader;
         loader.set_model_uri_resolver(std::shared_ptr<cse::model_uri_resolver>(&uriResolver, [](void*) {}));
-        loader.override_start_time(startTime);
-        return loader.load(path).first;
+        const auto config = loader.load(path);
+        auto execution = cse::execution(
+            startTime,
+            config.algorithm);
+        cse::inject_system_structure(
+            execution,
+            config.system_structure,
+            config.parameter_sets.at(""));
+        return execution;
     }
 }
 
