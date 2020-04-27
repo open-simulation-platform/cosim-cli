@@ -1,5 +1,5 @@
 [requires]
-cse-core/0.6.0@osp/master
+cse-core/0.6.0@osp/v0.6.0
 
 [generators]
 cmake
