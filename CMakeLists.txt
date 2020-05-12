@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project("cse-cli" VERSION "0.2.0")
+project("cosim" VERSION "0.2.0")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 
 # ==============================================================================
@@ -34,7 +34,7 @@ else()
     message(FATAL_ERROR "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first!")
 endif()
 
-find_package(csecore REQUIRED)
+find_package(libcosim REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
 
 # ==============================================================================
@@ -45,7 +45,7 @@ set(generatedFilesDir "${CMAKE_BINARY_DIR}/generated")
 file(WRITE "${generatedFilesDir}/project_version_from_cmake.hpp"
     "constexpr const char* project_version = \"${PROJECT_VERSION}\";\n")
 
-add_executable(cse
+add_executable(cosim
     "src/cache.hpp"
     "src/cache.cpp"
     "src/clean_cache.hpp"
@@ -70,15 +70,15 @@ add_executable(cse
     "src/version_option.hpp"
     "src/version_option.cpp"
 )
-target_include_directories(cse PRIVATE "${generatedFilesDir}")
-target_link_libraries(cse
+target_include_directories(cosim PRIVATE "${generatedFilesDir}")
+target_link_libraries(cosim
     PRIVATE
-        csecore::csecorecpp
+        libcosim::cosim
         Boost::program_options)
 
 # ==============================================================================
 # Installation
 # ==============================================================================
 
-install(TARGETS cse RUNTIME DESTINATION bin)
+install(TARGETS cosim RUNTIME DESTINATION bin)
 include(InstallRequiredSystemLibraries)

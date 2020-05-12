@@ -1,16 +1,16 @@
-#ifndef CSECLI_TOOLS_HPP
-#define CSECLI_TOOLS_HPP
+#ifndef COSIM_TOOLS_HPP
+#define COSIM_TOOLS_HPP
 
-#include <cse/uri.hpp>
+#include <cosim/uri.hpp>
 
 #include <string_view>
 
 
 /**
  *  Converts the given string, which may contain a URI or a filesystem path,
- *  to a `cse::uri` object.
+ *  to a `cosim::uri` object.
  */
-cse::uri to_uri(std::string_view str);
+cosim::uri to_uri(std::string_view str);
 
 
 #endif

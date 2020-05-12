@@ -4,8 +4,8 @@
 #include "tools.hpp"
 
 #include <boost/filesystem.hpp>
-#include <cse/orchestration.hpp>
-#include <cse/uri.hpp>
+#include <cosim/orchestration.hpp>
+#include <cosim/uri.hpp>
 
 #include <iomanip>
 #include <iostream>
@@ -33,7 +33,7 @@ namespace
 {
 constexpr int keyWidth = 14;
 
-void print_model_description(const cse::model_description& md)
+void print_model_description(const cosim::model_description& md)
 {
     std::cout
         << std::left
@@ -44,7 +44,7 @@ void print_model_description(const cse::model_description& md)
         << std::setw(keyWidth) << "version:" << md.version << '\n';
 }
 
-void print_variable_descriptions(const cse::model_description& md)
+void print_variable_descriptions(const cosim::model_description& md)
 {
     std::cout << "variables:\n";
     for (const auto& v : md.variables) {
@@ -68,7 +68,7 @@ int inspect_subcommand::run(const boost::program_options::variables_map& args) c
 {
     auto currentPath = boost::filesystem::current_path();
     currentPath += boost::filesystem::path::preferred_separator;
-    const auto baseUri = cse::path_to_file_uri(currentPath);
+    const auto baseUri = cosim::path_to_file_uri(currentPath);
     const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
     const auto uriResolver = caching_model_uri_resolver();
     const auto model = uriResolver->lookup_model(baseUri, uriReference);

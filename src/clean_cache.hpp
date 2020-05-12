@@ -1,5 +1,5 @@
-#ifndef CSECLI_CLEAN_CACHE_HPP
-#define CSECLI_CLEAN_CACHE_HPP
+#ifndef COSIM_CLEAN_CACHE_HPP
+#define COSIM_CLEAN_CACHE_HPP
 
 #include "cli_application.hpp"
 
@@ -21,7 +21,7 @@ public:
     std::string long_description() const noexcept override
     {
         return "This command removes unused files from the directory that "
-               "contains cached CSE data for the current user.\n"
+               "contains cached data for the current user.\n"
                "\n"
                "The primary use for the cache is to unpack FMUs in a "
                "persistent location, "
@@ -32,8 +32,8 @@ public:
                "a significant amount of disk space.\n"
                "\n"
                "This command allows for safe removal of files from the cache.  "
-               "It will remove all files that are not currently in use by a "
-               "CSE process.";
+               "It will remove all files that are not currently in use by another "
+               "cosim process.";
     }
 
     void setup_options(

@@ -1,5 +1,5 @@
-#ifndef CSECLI_CONSOLE_UTILS_HPP
-#define CSECLI_CONSOLE_UTILS_HPP
+#ifndef COSIM_CONSOLE_UTILS_HPP
+#define COSIM_CONSOLE_UTILS_HPP
 
 #include <ostream>
 #include <string_view>

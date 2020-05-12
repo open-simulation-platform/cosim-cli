@@ -1,5 +1,5 @@
-#ifndef CSECLI_RUN_HPP
-#define CSECLI_RUN_HPP
+#ifndef COSIM_RUN_HPP
+#define COSIM_RUN_HPP
 
 #include "cli_application.hpp"
 

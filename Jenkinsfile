@@ -36,7 +36,7 @@ pipeline {
                         stage('Build Release') {
                             steps {
                                 dir('release-build') {
-                                    bat 'conan install -u ../ -s build_type=Release -o cse-core:fmuproxy=True -b missing'
+                                    bat 'conan install -u ../ -s build_type=Release -o libcosim:fmuproxy=True -b missing'
                                     bat 'cmake -G "Visual Studio 15 2017 Win64" ../'
                                     bat 'cmake --build . --config Release'
                                     bat 'cmake --build . --config Release --target install'
@@ -50,7 +50,7 @@ pipeline {
                             steps {
                                 dir ('release-build/dist') {
                                     zip (
-                                        zipFile: "cse-cli-win64.zip",
+                                        zipFile: "cosim-win64.zip",
                                         archive: true
                                     )
                                 }
@@ -61,7 +61,7 @@ pipeline {
                             steps {
                                 dir ('release-build/dist') {
                                     zip (
-                                        zipFile: "cse-cli-${env.TAG_NAME}-win64.zip",
+                                        zipFile: "cosim-${env.TAG_NAME}-win64.zip",
                                         archive: true
                                     )
                                 }
@@ -112,7 +112,7 @@ pipeline {
                         stage('Build Release') {
                             steps {
                                 dir('release-build') {
-                                    sh 'conan install -u ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -o cse-core:fmuproxy=True -b missing'
+                                    sh 'conan install -u ../ -s compiler.libcxx=libstdc++11 -s build_type=Release -o libcosim:fmuproxy=True -b missing'
                                     sh 'for f in dist/lib/*; do patchelf --set-rpath \\$ORIGIN $f; done'
                                     sh 'cmake -DCMAKE_BUILD_TYPE=Release ../'
                                     sh 'cmake --build .'
@@ -127,7 +127,7 @@ pipeline {
                             steps {
                                 dir ('release-build/dist') {
                                     zip (
-                                        zipFile: "cse-cli-linux.zip",
+                                        zipFile: "cosim-linux.zip",
                                         archive: true
                                     )
                                 }
@@ -138,7 +138,7 @@ pipeline {
                             steps {
                                 dir ('release-build/dist') {
                                     zip (
-                                        zipFile: "cse-cli-${env.TAG_NAME}-linux.zip",
+                                        zipFile: "cosim-${env.TAG_NAME}-linux.zip",
                                         archive: true
                                     )
                                 }

@@ -1,5 +1,5 @@
-#ifndef CSECLI_CLI_APPLICATION_HPP
-#define CSECLI_CLI_APPLICATION_HPP
+#ifndef COSIM_CLI_APPLICATION_HPP
+#define COSIM_CLI_APPLICATION_HPP
 
 #include <boost/program_options.hpp>
 

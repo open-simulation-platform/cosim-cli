@@ -1,9 +1,9 @@
-#ifndef CSECLI_RUN_COMMON_HPP
-#define CSECLI_RUN_COMMON_HPP
+#ifndef COSIM_RUN_COMMON_HPP
+#define COSIM_RUN_COMMON_HPP
 
 #include <boost/program_options.hpp>
-#include <cse/execution.hpp>
-#include <cse/model.hpp>
+#include <cosim/execution.hpp>
+#include <cosim/model.hpp>
 
 #include <chrono>
 #include <optional>
@@ -17,8 +17,8 @@ void setup_common_run_options(
 /// Values of common 'run' subcommand options.
 struct common_run_option_values
 {
-    cse::time_point begin_time;
-    cse::time_point end_time;
+    cosim::time_point begin_time;
+    cosim::time_point end_time;
     std::optional<double> rtf_target;
     std::optional<int> mr_progress_resolution;
 };
@@ -34,15 +34,15 @@ class progress_logger
 {
 public:
     progress_logger(
-        cse::time_point startTime,
-        cse::duration duration,
+        cosim::time_point startTime,
+        cosim::duration duration,
         int percentIncrement,
         std::optional<int> mrProgressResolution);
 
-    void update(cse::time_point currentTime);
+    void update(cosim::time_point currentTime);
 
 private:
-    const cse::time_point startTime_;
+    const cosim::time_point startTime_;
     const double fullDuration_;
     const int percentIncrement_;
     const std::optional<int> mrProgressResolution_;

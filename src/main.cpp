@@ -9,7 +9,7 @@
 
 #include <boost/log/expressions.hpp>
 #include <boost/log/utility/setup/console.hpp>
-#include <cse/log/simple.hpp>
+#include <cosim/log/simple.hpp>
 
 
 void setup_logging_sink()
@@ -17,21 +17,21 @@ void setup_logging_sink()
     const auto sink = boost::log::add_console_log();
     namespace expr = boost::log::expressions;
     sink->set_formatter(
-        expr::stream << cse::log::severity << ": " << expr::smessage);
+        expr::stream << cosim::log::severity << ": " << expr::smessage);
 }
 
 
 int main(int argc, char const* const* argv)
 {
     setup_logging_sink();
-    cse::log::set_global_output_level(cse::log::warning);
+    cosim::log::set_global_output_level(cosim::log::warning);
 
     cli_application app(
-        "cse",
-        "Command-line interface to the Core Simulation Environment",
-        "The Core Simulation Environment is free and open-source software for running distributed co-simulations.");
+        "cosim",
+        "Command-line co-simulation tool based on libcosim",
+        "cosim and libcosim are free and open-source software for running distributed co-simulations.");
     app.add_global_options(std::make_unique<logging_options>());
-    app.add_global_options(std::make_unique<version_option>("CSE CLI", project_version));
+    app.add_global_options(std::make_unique<version_option>("cosim", project_version));
     app.add_subcommand(std::make_unique<clean_cache_subcommand>());
     app.add_subcommand(std::make_unique<inspect_subcommand>());
     app.add_subcommand(std::make_unique<run_subcommand>());

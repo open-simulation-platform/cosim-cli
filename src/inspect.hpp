@@ -1,5 +1,5 @@
-#ifndef CSECLI_INSPECT_HPP
-#define CSECLI_INSPECT_HPP
+#ifndef COSIM_INSPECT_HPP
+#define COSIM_INSPECT_HPP
 
 #include "cli_application.hpp"
 
