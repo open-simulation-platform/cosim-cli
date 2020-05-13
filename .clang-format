@@ -26,7 +26,7 @@ BraceWrapping:
   AfterControlStatement: false
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex:      '^[<"](boost|cse|gsl)[/.]'
+  - Regex:      '^[<"](boost|cosim|gsl)[/.]'
     Priority:   30
   - Regex:      '^"'
     Priority:   10

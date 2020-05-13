@@ -1,5 +1,5 @@
-#ifndef CSECLI_VERSION_OPTION_HPP
-#define CSECLI_VERSION_OPTION_HPP
+#ifndef COSIM_VERSION_OPTION_HPP
+#define COSIM_VERSION_OPTION_HPP
 
 #include "cli_application.hpp"
 

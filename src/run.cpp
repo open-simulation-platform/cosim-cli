@@ -4,14 +4,14 @@
 #include "run_common.hpp"
 
 #include <boost/filesystem.hpp>
-#include <cse/algorithm/fixed_step_algorithm.hpp>
-#include <cse/cse_config_parser.hpp>
-#include <cse/manipulator/scenario_manager.hpp>
-#include <cse/model.hpp>
-#include <cse/observer/file_observer.hpp>
-#include <cse/observer/observer.hpp>
-#include <cse/orchestration.hpp>
-#include <cse/ssp/ssp_loader.hpp>
+#include <cosim/algorithm/fixed_step_algorithm.hpp>
+#include <cosim/manipulator/scenario_manager.hpp>
+#include <cosim/model.hpp>
+#include <cosim/observer/file_observer.hpp>
+#include <cosim/observer/observer.hpp>
+#include <cosim/orchestration.hpp>
+#include <cosim/osp_config_parser.hpp>
+#include <cosim/ssp/ssp_loader.hpp>
 
 #include <chrono>
 #include <memory>
@@ -66,31 +66,31 @@ void run_subcommand::setup_options(
 namespace
 {
 
-cse::execution load_system_structure(
+cosim::execution load_system_structure(
     const boost::filesystem::path& path,
-    cse::model_uri_resolver& uriResolver,
-    cse::time_point startTime)
+    cosim::model_uri_resolver& uriResolver,
+    cosim::time_point startTime)
 {
     if (path.extension() == ".xml" ||
         (boost::filesystem::is_directory(path) &&
             boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
-        const auto config = cse::load_cse_config(path, uriResolver);
-        auto execution = cse::execution(
+        const auto config = cosim::load_osp_config(path, uriResolver);
+        auto execution = cosim::execution(
             startTime,
-            std::make_shared<cse::fixed_step_algorithm>(config.step_size));
-        cse::inject_system_structure(
+            std::make_shared<cosim::fixed_step_algorithm>(config.step_size));
+        cosim::inject_system_structure(
             execution,
             config.system_structure,
             config.initial_values);
         return execution;
     } else {
-        cse::ssp_loader loader;
-        loader.set_model_uri_resolver(std::shared_ptr<cse::model_uri_resolver>(&uriResolver, [](void*) {}));
+        cosim::ssp_loader loader;
+        loader.set_model_uri_resolver(std::shared_ptr<cosim::model_uri_resolver>(&uriResolver, [](void*) {}));
         const auto config = loader.load(path);
-        auto execution = cse::execution(
+        auto execution = cosim::execution(
             startTime,
             config.algorithm);
-        cse::inject_system_structure(
+        cosim::inject_system_structure(
             execution,
             config.system_structure,
             config.parameter_sets.at(""));
@@ -99,7 +99,7 @@ cse::execution load_system_structure(
 }
 
 
-std::unique_ptr<cse::observer> make_file_observer(
+std::unique_ptr<cosim::observer> make_file_observer(
     const boost::filesystem::path& outputDir,
     const std::string& outputConfigArg,
     const boost::filesystem::path& systemStructurePath)
@@ -111,69 +111,69 @@ std::unique_ptr<cse::observer> make_file_observer(
             : systemStructurePath.parent_path();
         const auto autoConfigFile = systemStructureDir / "LogConfig.xml";
         if (boost::filesystem::exists(autoConfigFile)) {
-            return std::make_unique<cse::file_observer>(outputDir, autoConfigFile);
+            return std::make_unique<cosim::file_observer>(outputDir, autoConfigFile);
         } else {
-            return std::make_unique<cse::file_observer>(outputDir);
+            return std::make_unique<cosim::file_observer>(outputDir);
         }
     } else if (outputConfigArg == "all") {
-        return std::make_unique<cse::file_observer>(outputDir);
+        return std::make_unique<cosim::file_observer>(outputDir);
     } else if (outputConfigArg == "none") {
         return nullptr;
     } else {
-        return std::make_unique<cse::file_observer>(outputDir, outputConfigArg);
+        return std::make_unique<cosim::file_observer>(outputDir, outputConfigArg);
     }
 }
 
 
 void load_scenario(
-    cse::execution& execution,
+    cosim::execution& execution,
     const boost::filesystem::path& scenarioPath,
-    cse::time_point startTime)
+    cosim::time_point startTime)
 {
-    auto s = std::make_shared<cse::scenario_manager>();
+    auto s = std::make_shared<cosim::scenario_manager>();
     execution.add_manipulator(s);
     s->load_scenario(scenarioPath, startTime);
 }
 
 
-class progress_monitor : public cse::observer
+class progress_monitor : public cosim::observer
 {
 public:
     progress_monitor(
-        cse::time_point startTime,
-        cse::duration duration,
+        cosim::time_point startTime,
+        cosim::duration duration,
         int percentIncrement,
         std::optional<int> mrProgressResolution)
         : logger_(startTime, duration, percentIncrement, mrProgressResolution)
     {}
 
 private:
-    void simulator_added(cse::simulator_index, cse::observable*, cse::time_point) override {}
-    void simulator_removed(cse::simulator_index, cse::time_point) override {}
-    void variables_connected(cse::variable_id, cse::variable_id, cse::time_point) override {}
-    void variable_disconnected(cse::variable_id, cse::time_point) override {}
+    void simulator_added(cosim::simulator_index, cosim::observable*, cosim::time_point) override {}
+    void simulator_removed(cosim::simulator_index, cosim::time_point) override {}
+    void variables_connected(cosim::variable_id, cosim::variable_id, cosim::time_point) override {}
+    void variable_disconnected(cosim::variable_id, cosim::time_point) override {}
 
     void simulation_initialized(
-        cse::step_number /*firstStep*/,
-        cse::time_point startTime) override
+        cosim::step_number /*firstStep*/,
+        cosim::time_point startTime) override
     {
         logger_.update(startTime);
     }
 
     void step_complete(
-        cse::step_number /*lastStep*/,
-        cse::duration /*lastStepSize*/,
-        cse::time_point currentTime)
+        cosim::step_number /*lastStep*/,
+        cosim::duration /*lastStepSize*/,
+        cosim::time_point currentTime)
         override
     {
         logger_.update(currentTime);
     }
 
     void simulator_step_complete(
-        cse::simulator_index,
-        cse::step_number,
-        cse::duration,
-        cse::time_point)
+        cosim::simulator_index,
+        cosim::step_number,
+        cosim::duration,
+        cosim::time_point)
         override
     {}
 
@@ -208,7 +208,7 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
         load_scenario(
             execution,
             args["scenario"].as<std::string>(),
-            cse::to_time_point(args["scenario-start"].as<double>()));
+            cosim::to_time_point(args["scenario-start"].as<double>()));
     }
 
     execution.add_observer(

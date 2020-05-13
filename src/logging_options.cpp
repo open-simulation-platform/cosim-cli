@@ -1,6 +1,6 @@
 #include "logging_options.hpp"
 
-#include <cse/log/simple.hpp>
+#include <cosim/log/simple.hpp>
 
 
 void logging_options::setup_options(
@@ -27,19 +27,19 @@ std::optional<int> logging_options::handle_options(
             throw boost::program_options::error(
                 "Options '--log-level' and '--verbose' cannot be used simultaneously");
         }
-        cse::log::set_global_output_level(cse::log::info);
+        cosim::log::set_global_output_level(cosim::log::info);
     } else {
         const auto level = args["log-level"].as<std::string>();
         if (level == "trace") {
-            cse::log::set_global_output_level(cse::log::trace);
+            cosim::log::set_global_output_level(cosim::log::trace);
         } else if (level == "debug") {
-            cse::log::set_global_output_level(cse::log::debug);
+            cosim::log::set_global_output_level(cosim::log::debug);
         } else if (level == "info") {
-            cse::log::set_global_output_level(cse::log::info);
+            cosim::log::set_global_output_level(cosim::log::info);
         } else if (level == "warning") {
-            cse::log::set_global_output_level(cse::log::warning);
+            cosim::log::set_global_output_level(cosim::log::warning);
         } else if (level == "error") {
-            cse::log::set_global_output_level(cse::log::error);
+            cosim::log::set_global_output_level(cosim::log::error);
         } else {
             throw boost::program_options::error(
                 "Invalid '--log-level' value: " + level);

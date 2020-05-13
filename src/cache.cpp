@@ -1,8 +1,8 @@
 #include "cache.hpp"
 
 #include <boost/filesystem.hpp>
-#include <cse/file_cache.hpp>
-#include <cse/log/logger.hpp>
+#include <cosim/file_cache.hpp>
+#include <cosim/log/logger.hpp>
 
 #include <cstdlib>
 #include <optional>
@@ -18,7 +18,7 @@ const char* getenv(const char* variableName)
 {
     const auto e = std::getenv(variableName);
     if (e && *e) return e;
-    BOOST_LOG_SEV(cse::log::logger(), cse::log::debug)
+    BOOST_LOG_SEV(cosim::log::logger(), cosim::log::debug)
         << "Environment variable '" << variableName << "' not set.";
     return nullptr;
 }
@@ -55,7 +55,7 @@ std::optional<boost::filesystem::path> user_cache_directory_path()
 std::optional<boost::filesystem::path> cache_directory_path()
 {
     if (const auto userCache = user_cache_directory_path()) {
-        return *userCache / "cse";
+        return *userCache / "cosim";
     } else {
         return std::nullopt;
     }
@@ -64,17 +64,17 @@ std::optional<boost::filesystem::path> cache_directory_path()
 } // namespace
 
 
-std::shared_ptr<cse::model_uri_resolver> caching_model_uri_resolver()
+std::shared_ptr<cosim::model_uri_resolver> caching_model_uri_resolver()
 {
     if (const auto cachePath = cache_directory_path()) {
-        const auto cache = std::make_shared<cse::persistent_file_cache>(*cachePath);
-        BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
+        const auto cache = std::make_shared<cosim::persistent_file_cache>(*cachePath);
+        BOOST_LOG_SEV(cosim::log::logger(), cosim::log::info)
             << "Using cache directory: " << *cachePath;
-        return cse::default_model_uri_resolver(cache);
+        return cosim::default_model_uri_resolver(cache);
     } else {
-        BOOST_LOG_SEV(cse::log::logger(), cse::log::warning)
+        BOOST_LOG_SEV(cosim::log::logger(), cosim::log::warning)
             << "Unable to determine user cache directory; caching is disabled.";
-        return cse::default_model_uri_resolver();
+        return cosim::default_model_uri_resolver();
     }
 }
 
@@ -82,8 +82,8 @@ std::shared_ptr<cse::model_uri_resolver> caching_model_uri_resolver()
 void clean_cache()
 {
     if (const auto cachePath = cache_directory_path()) {
-        const auto cache = std::make_shared<cse::persistent_file_cache>(*cachePath);
-        BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
+        const auto cache = std::make_shared<cosim::persistent_file_cache>(*cachePath);
+        BOOST_LOG_SEV(cosim::log::logger(), cosim::log::info)
             << "Cleaning cache directory: " << *cachePath;
         cache->cleanup();
     } else {

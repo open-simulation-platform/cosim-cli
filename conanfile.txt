@@ -1,5 +1,5 @@
 [requires]
-cse-core/0.6.0@osp/master
+libcosim/0.7.0@osp/master
 
 [generators]
 cmake
@@ -18,7 +18,7 @@ bin, boost_program_options*.dll    -> ./dist/bin
 bin, boost_regex*.dll              -> ./dist/bin
 bin, boost_system*.dll             -> ./dist/bin
 bin, boost_thread*.dll             -> ./dist/bin
-bin, csecorecpp.dll                -> ./dist/bin
+bin, libcosim.dll                  -> ./dist/bin
 
 lib, libboost_atomic.so.*          -> ./dist/lib
 lib, libboost_chrono.so.*          -> ./dist/lib
@@ -32,4 +32,4 @@ lib, libboost_program_options.so.* -> ./dist/lib
 lib, libboost_regex.so.*           -> ./dist/lib
 lib, libboost_system.so.*          -> ./dist/lib
 lib, libboost_thread.so.*          -> ./dist/lib
-lib, libcsecorecpp.so              -> ./dist/lib
+lib, libcosim.so                   -> ./dist/lib

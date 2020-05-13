@@ -1,6 +1,6 @@
 #include "run_common.hpp"
 
-#include <cse/log/logger.hpp>
+#include <cosim/log/logger.hpp>
 
 #include <ios>
 #include <iostream>
@@ -44,16 +44,16 @@ common_run_option_values get_common_run_options(
 {
     common_run_option_values values;
 
-    values.begin_time = cse::to_time_point(args["begin-time"].as<double>());
+    values.begin_time = cosim::to_time_point(args["begin-time"].as<double>());
     if (args.count("end-time")) {
         if (!args["duration"].defaulted()) {
             throw boost::program_options::error(
                 "Options '--duration' and '--end-time' cannot be used simultaneously");
         }
-        values.end_time = cse::to_time_point(args["end-time"].as<double>());
+        values.end_time = cosim::to_time_point(args["end-time"].as<double>());
     } else {
         values.end_time =
-            values.begin_time + cse::to_duration(args["duration"].as<double>());
+            values.begin_time + cosim::to_duration(args["duration"].as<double>());
     }
 
     if (args.count("mr-progress")) {
@@ -67,29 +67,29 @@ common_run_option_values get_common_run_options(
 
 
 progress_logger::progress_logger(
-    cse::time_point startTime,
-    cse::duration duration,
+    cosim::time_point startTime,
+    cosim::duration duration,
     int percentIncrement,
     std::optional<int> mrProgressResolution)
     : startTime_(startTime)
-    , fullDuration_(cse::to_double_duration(duration, startTime))
+    , fullDuration_(cosim::to_double_duration(duration, startTime))
     , percentIncrement_(percentIncrement)
     , mrProgressResolution_(mrProgressResolution)
     , nextPercentage_(percentIncrement)
 {}
 
 
-void progress_logger::update(cse::time_point currentTime)
+void progress_logger::update(cosim::time_point currentTime)
 {
     const auto currentDuration =
-        cse::to_double_duration(currentTime - startTime_, startTime_);
+        cosim::to_double_duration(currentTime - startTime_, startTime_);
     const auto progress = currentDuration / fullDuration_;
 
     const auto percentProgress = 100.0 * progress;
     while (nextPercentage_ <= percentProgress) {
-        BOOST_LOG_SEV(cse::log::logger(), cse::log::info)
+        BOOST_LOG_SEV(cosim::log::logger(), cosim::log::info)
             << nextPercentage_ << "% complete, t="
-            << std::fixed << cse::to_double_time_point(currentTime)
+            << std::fixed << cosim::to_double_time_point(currentTime)
             << std::defaultfloat;
         nextPercentage_ += percentIncrement_;
     }
@@ -101,7 +101,7 @@ void progress_logger::update(cse::time_point currentTime)
                 << "@progress "
                 << nextMRProgress_ << ' '
                 << std::fixed
-                << cse::to_double_time_point(currentTime) << ' '
+                << cosim::to_double_time_point(currentTime) << ' '
                 << currentDuration
                 << std::defaultfloat << std::endl;
             ++nextMRProgress_;

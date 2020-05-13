@@ -1,16 +1,16 @@
-CSE CLI
-=======
+cosim
+=====
 
-CSE CLI is a command-line interface (CLI) to the [Core Simulation Environment]
-(CSE).  It has three primary use cases:
+`cosim` is a command-line co-simulation tool based on [libcosim].
+It has three primary use cases:
 
   * Running simulations from other programs or scripts
   * FMU testing and debugging
   * Users who simply prefer to work from the command line
 
-Specifically, the CSE CLI can be used to perform the following tasks:
+Specifically, `cosim` can be used to perform the following tasks:
 
-  * Run a simulation based on a system structure given in either OSP XML or SSP format
+  * Run a simulation based on a system structure given in either OSP or SSP format
   * Run a simulation based on a single FMU (usually for testing/debugging purposes)
   * Show information about an FMU
 
@@ -22,13 +22,13 @@ Usage
 The command syntax for the program has a "Git-like" subcommand structure.  That is,
 all commands are on the form
 
-    cse <subcommand> <arguments...> [options...]
+    cosim <subcommand> <arguments...> [options...]
 
 For example, the following will run a simulation based on the system description
 in `path/to/my_system` and write the results to `path/to/my_results`, providing
 extra information (e.g. progress) to the user's terminal:
 
-    cse run path/to/my_system --output-dir=path/to/my_results -v
+    cosim run path/to/my_system --output-dir=path/to/my_results -v
 
 The documentation is built into the program itself, by means of the `help` subcommand.
 
@@ -36,8 +36,8 @@ The documentation is built into the program itself, by means of the `help` subco
 How to build
 ------------
 
-The tools and steps required to build CSE CLI are more or less the same as those
-required for cse-core, so we refer to the [cse-core README] for this information.
+The tools and steps required to build `cosim` are more or less the same as those
+required for libcosim, so we refer to the [libcosim README] for this information.
 There are some noteworthy differences, though:
 
   * Conan is a *mandatory* requirement for the time being.
@@ -51,19 +51,19 @@ On Linux:
     conan install ..
     cmake .. -DCMAKE_BUILD_TYPE=Debug
     cmake --build .
-    ./cse help
+    ./cosim help
 
 And on Windows:
 
     mkdir build
     cd build
-    conan install .. -s build_type=Debug -g virtualrunenv
+    conan install .. -s build_type=Debug
     cmake .. -A x64
     cmake --build .
     activate_run.bat
-    Debug\cse help
+    Debug\cosim help
     deactivate_run.bat
 
 
-[Core Simulation Environment]: https://github.com/open-simulation-platform
-[cse-core README]: https://github.com/open-simulation-platform/cse-core#readme
+[libcosim]: https://github.com/open-simulation-platform/libcosim
+[libcosim README]: https://github.com/open-simulation-platform/libcosim#readme

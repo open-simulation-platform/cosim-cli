@@ -1,5 +1,5 @@
-#ifndef CSECLI_LOGGING_OPTIONS_HPP
-#define CSECLI_LOGGING_OPTIONS_HPP
+#ifndef COSIM_LOGGING_OPTIONS_HPP
+#define COSIM_LOGGING_OPTIONS_HPP
 
 #include "cli_application.hpp"
 

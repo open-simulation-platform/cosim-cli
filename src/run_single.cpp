@@ -10,9 +10,9 @@
 #include <boost/container/vector.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
-#include <cse/model.hpp>
-#include <cse/orchestration.hpp>
-#include <cse/timer.hpp>
+#include <cosim/model.hpp>
+#include <cosim/orchestration.hpp>
+#include <cosim/timer.hpp>
 #include <gsl/span>
 
 #include <algorithm>
@@ -60,21 +60,21 @@ namespace
 
 struct variable_values
 {
-    boost::container::vector<cse::value_reference> realVariables;
+    boost::container::vector<cosim::value_reference> realVariables;
     boost::container::vector<double> realValues;
-    boost::container::vector<cse::value_reference> integerVariables;
+    boost::container::vector<cosim::value_reference> integerVariables;
     boost::container::vector<int> integerValues;
-    boost::container::vector<cse::value_reference> booleanVariables;
+    boost::container::vector<cosim::value_reference> booleanVariables;
     boost::container::vector<bool> booleanValues;
-    boost::container::vector<cse::value_reference> stringVariables;
+    boost::container::vector<cosim::value_reference> stringVariables;
     boost::container::vector<std::string> stringValues;
 };
 
 variable_values parse_initial_values(
     const std::vector<std::string>& args,
-    const cse::model_description& modelDescription)
+    const cosim::model_description& modelDescription)
 {
-    std::unordered_map<std::string_view, const cse::variable_description*> fastVarLookup;
+    std::unordered_map<std::string_view, const cosim::variable_description*> fastVarLookup;
     for (const auto& var : modelDescription.variables) {
         fastVarLookup.emplace(var.name, &var);
     }
@@ -96,8 +96,8 @@ variable_values parse_initial_values(
         }
         const auto& var = *(varIt->second);
 
-        if (var.causality != cse::variable_causality::parameter &&
-            var.causality != cse::variable_causality::input) {
+        if (var.causality != cosim::variable_causality::parameter &&
+            var.causality != cosim::variable_causality::input) {
             throw std::runtime_error(
                 "Cannot initialise variable: " + std::string(name) +
                 " (only parameter and input variables can be set)");
@@ -105,15 +105,15 @@ variable_values parse_initial_values(
 
         try {
             switch (var.type) {
-                case cse::variable_type::real:
+                case cosim::variable_type::real:
                     values.realVariables.push_back(var.reference);
                     values.realValues.push_back(boost::lexical_cast<double>(value));
                     break;
-                case cse::variable_type::integer:
+                case cosim::variable_type::integer:
                     values.integerVariables.push_back(var.reference);
                     values.integerValues.push_back(boost::lexical_cast<int>(value));
                     break;
-                case cse::variable_type::boolean:
+                case cosim::variable_type::boolean:
                     values.booleanVariables.push_back(var.reference);
                     if (value == "true") {
                         values.booleanValues.push_back(true);
@@ -123,7 +123,7 @@ variable_values parse_initial_values(
                         throw std::runtime_error("");
                     }
                     break;
-                case cse::variable_type::string:
+                case cosim::variable_type::string:
                     values.stringVariables.push_back(var.reference);
                     values.stringValues.push_back(std::string(value));
                     break;
@@ -140,15 +140,15 @@ variable_values parse_initial_values(
 }
 
 
-// This reimplements some of the functionality in `cse::file_observer` in order
+// This reimplements some of the functionality in `cosim::file_observer` in order
 // to write a CSV file with (almost) the same format.  This is rather
 // unsatisfactory, but the alternative was to do a lot more work to refactor and
-// expose CSE internals.
+// expose libcosim internals.
 class csv_output_writer
 {
 public:
     csv_output_writer(
-        std::shared_ptr<cse::async_slave> simulator,
+        std::shared_ptr<cosim::async_slave> simulator,
         const boost::filesystem::path& outputFile)
         : simulator_(simulator)
     {
@@ -163,19 +163,19 @@ public:
         std::stringstream stringVarHeader;
         for (const auto& var : simulator_->model_description().get().variables) {
             switch (var.type) {
-                case cse::variable_type::real:
+                case cosim::variable_type::real:
                     realVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
                     realVariables_.push_back(var.reference);
                     break;
-                case cse::variable_type::integer:
+                case cosim::variable_type::integer:
                     integerVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
                     integerVariables_.push_back(var.reference);
                     break;
-                case cse::variable_type::boolean:
+                case cosim::variable_type::boolean:
                     booleanVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
                     booleanVariables_.push_back(var.reference);
                     break;
-                case cse::variable_type::string:
+                case cosim::variable_type::string:
                     stringVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
                     stringVariables_.push_back(var.reference);
                     break;
@@ -191,7 +191,7 @@ public:
         outputStream_ << '\n';
     }
 
-    void update(cse::time_point t)
+    void update(cosim::time_point t)
     {
         const auto values = simulator_
                                 ->get_variables(
@@ -200,7 +200,7 @@ public:
                                     gsl::make_span(booleanVariables_),
                                     gsl::make_span(stringVariables_))
                                 .get();
-        outputStream_ << std::fixed << cse::to_double_time_point(t) << std::defaultfloat;
+        outputStream_ << std::fixed << cosim::to_double_time_point(t) << std::defaultfloat;
         for (const auto& v : values.real) {
             outputStream_ << ',' << v;
         }
@@ -217,13 +217,13 @@ public:
     }
 
 private:
-    std::shared_ptr<cse::async_slave> simulator_;
+    std::shared_ptr<cosim::async_slave> simulator_;
     std::ofstream outputStream_;
 
-    boost::container::vector<cse::value_reference> realVariables_;
-    boost::container::vector<cse::value_reference> integerVariables_;
-    boost::container::vector<cse::value_reference> booleanVariables_;
-    boost::container::vector<cse::value_reference> stringVariables_;
+    boost::container::vector<cosim::value_reference> realVariables_;
+    boost::container::vector<cosim::value_reference> integerVariables_;
+    boost::container::vector<cosim::value_reference> booleanVariables_;
+    boost::container::vector<cosim::value_reference> stringVariables_;
 };
 
 
@@ -233,8 +233,8 @@ private:
 int run_single_subcommand::run(const boost::program_options::variables_map& args) const
 {
     const auto runOptions = get_common_run_options(args);
-    const auto stepSize = cse::to_duration(args["step-size"].as<double>());
-    if (stepSize <= cse::duration(0)) {
+    const auto stepSize = cosim::to_duration(args["step-size"].as<double>());
+    if (stepSize <= cosim::duration(0)) {
         throw boost::program_options::error("Invalid step size (must be >0)");
     }
 
@@ -244,7 +244,7 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
         10,
         runOptions.mr_progress_resolution);
 
-    cse::real_time_timer timer;
+    cosim::real_time_timer timer;
     if (runOptions.rtf_target) {
         timer.set_real_time_factor_target(*runOptions.rtf_target);
         timer.enable_real_time_simulation();
@@ -252,7 +252,7 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
 
     auto currentPath = boost::filesystem::current_path();
     currentPath += boost::filesystem::path::preferred_separator;
-    const auto baseUri = cse::path_to_file_uri(currentPath);
+    const auto baseUri = cosim::path_to_file_uri(currentPath);
     const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
     const auto uriResolver = caching_model_uri_resolver();
     const auto model = uriResolver->lookup_model(baseUri, uriReference);
@@ -289,11 +289,11 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
     for (auto t = runOptions.begin_time; t < runOptions.end_time;) {
         const auto dt = std::min(runOptions.end_time - t, stepSize);
         const auto stepResult = simulator->do_step(t, stepSize).get();
-        if (stepResult != cse::step_result::complete) {
+        if (stepResult != cosim::step_result::complete) {
             simulator->end_simulation().get();
             throw std::runtime_error(
                 "Simulator was unable to complete time step at t=" +
-                std::to_string(cse::to_double_time_point(t)));
+                std::to_string(cosim::to_double_time_point(t)));
         }
         t += dt;
         output.update(t);
