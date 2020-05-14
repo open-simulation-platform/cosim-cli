@@ -86,7 +86,7 @@ jobs:
           cmake --build .
           cmake --build . --target install
       - name: Upload artifact
-          uses: actions/upload-artifact@v2
-          with:
-            name: cosim-${{ runner.os }}
-            path: build/dist
+        uses: actions/upload-artifact@v2
+        with:
+          name: cosim-${{ runner.os }}
+          path: build/dist
