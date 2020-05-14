@@ -80,5 +80,5 @@ jobs:
           cd build
           conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -o libcosim:${{ matrix.option_fmuproxy }} ../
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ../
-          cmake -- build .
-          cmake -- build . --target install
+          cmake --build .
+          cmake --build . --target install
