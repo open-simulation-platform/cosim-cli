@@ -41,8 +41,13 @@ jobs:
           cd build
           conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_fmuproxy }} ../
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ../
-          cmake -- build .
-          cmake -- build . --target install
+          cmake --build .
+          cmake --build . --target install
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: cosim-${{ runner.os }}
+          path: build/dist
 
   conan-on-windows:
     name: Conan
