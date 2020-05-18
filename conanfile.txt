@@ -1,5 +1,5 @@
 [requires]
-libcosim/0.7.0@osp/scm-auto
+libcosim/0.7.0@osp/master
 
 [generators]
 cmake
