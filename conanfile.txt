@@ -18,7 +18,7 @@ bin, boost_program_options*.dll    -> ./dist/bin
 bin, boost_regex*.dll              -> ./dist/bin
 bin, boost_system*.dll             -> ./dist/bin
 bin, boost_thread*.dll             -> ./dist/bin
-bin, libcosim.dll                  -> ./dist/bin
+bin, cosim.dll                     -> ./dist/bin
 
 lib, libboost_atomic.so.*          -> ./dist/lib
 lib, libboost_chrono.so.*          -> ./dist/lib
