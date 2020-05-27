@@ -5,6 +5,8 @@
  */
 #include "version_option.hpp"
 
+#include <cosim/lib_info.hpp>
+
 #include <iostream>
 
 
@@ -29,6 +31,11 @@ std::optional<int> version_option::handle_options(
 {
     if (args.count("version")) {
         std::cout << programName_ << ' ' << programVersion_ << std::endl;
+        const auto libcosimVersion = cosim::library_version();
+        std::cout << "Using " << cosim::library_short_name << ' '
+                  << libcosimVersion.major << '.'
+                  << libcosimVersion.minor << '.'
+                  << libcosimVersion.patch << std::endl;
         return 0;
     } else {
         return {};
