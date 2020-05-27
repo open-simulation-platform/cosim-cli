@@ -8,7 +8,7 @@
 
 #include <boost/program_options.hpp>
 #include <cosim/execution.hpp>
-#include <cosim/model.hpp>
+#include <cosim/time.hpp>
 
 #include <chrono>
 #include <optional>
