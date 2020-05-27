@@ -50,7 +50,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: cosim-${{ runner.os }}
+          name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_fmuproxy }}
           path: build/dist
 
   conan-on-windows:
@@ -89,5 +89,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: cosim-${{ runner.os }}
+          name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.option_fmuproxy }}
           path: build/dist
