@@ -15,8 +15,9 @@
 #include <boost/container/vector.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
-#include <cosim/model.hpp>
+#include <cosim/model_description.hpp>
 #include <cosim/orchestration.hpp>
+#include <cosim/time.hpp>
 #include <cosim/timer.hpp>
 #include <gsl/span>
 
