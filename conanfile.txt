@@ -6,18 +6,18 @@ cmake
 virtualrunenv
 
 [imports]
-bin, boost_atomic*.dll             -> ./dist/bin
-bin, boost_chrono*.dll             -> ./dist/bin
-bin, boost_context*.dll            -> ./dist/bin
-bin, boost_date_time*.dll          -> ./dist/bin
-bin, boost_fiber*.dll              -> ./dist/bin
-bin, boost_filesystem*.dll         -> ./dist/bin
-bin, boost_log*.dll                -> ./dist/bin
-bin, boost_log_setup*.dll          -> ./dist/bin
-bin, boost_program_options*.dll    -> ./dist/bin
-bin, boost_regex*.dll              -> ./dist/bin
-bin, boost_system*.dll             -> ./dist/bin
-bin, boost_thread*.dll             -> ./dist/bin
+lib, boost_atomic*.dll             -> ./dist/bin
+lib, boost_chrono*.dll             -> ./dist/bin
+lib, boost_context*.dll            -> ./dist/bin
+lib, boost_date_time*.dll          -> ./dist/bin
+lib, boost_fiber*.dll              -> ./dist/bin
+lib, boost_filesystem*.dll         -> ./dist/bin
+lib, boost_log*.dll                -> ./dist/bin
+lib, boost_log_setup*.dll          -> ./dist/bin
+lib, boost_program_options*.dll    -> ./dist/bin
+lib, boost_regex*.dll              -> ./dist/bin
+lib, boost_system*.dll             -> ./dist/bin
+lib, boost_thread*.dll             -> ./dist/bin
 bin, cosim.dll                     -> ./dist/bin
 
 lib, libboost_atomic.so.*          -> ./dist/lib
