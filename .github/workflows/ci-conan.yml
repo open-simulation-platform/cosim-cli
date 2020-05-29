@@ -43,7 +43,7 @@ jobs:
           mkdir build
           cd build
           conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_fmuproxy }} ../
-          for f in dist/lib/*; do patchelf --set-rpath \\$ORIGIN $f; done
+          for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ../
           cmake --build .
           cmake --build . --target install
