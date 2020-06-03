@@ -76,6 +76,14 @@ target_link_libraries(cosim
         libcosim::cosim
         Boost::program_options)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # This makes the linker set RPATH rather than RUNPATH for the resulting
+    # binary, so that the indirect dependencies between dynamic libraries in
+    # our installation directory resolve correctly. (RPATH is transitive,
+    # RUNPATH is not.)
+    target_link_options(cosim PRIVATE "LINKER:--disable-new-dtags")
+endif()
+
 # ==============================================================================
 # Installation
 # ==============================================================================

@@ -19,6 +19,10 @@ lib, boost_regex*.dll              -> ./dist/bin
 lib, boost_system*.dll             -> ./dist/bin
 lib, boost_thread*.dll             -> ./dist/bin
 bin, cosim.dll                     -> ./dist/bin
+bin, fmilib_shared.dll             -> ./dist/bin
+bin, xerces-c*.dll                 -> ./dist/lib
+bin, yaml-cpp.dll                  -> ./dist/lib
+bin, libzip.dll                    -> ./dist/lib
 
 lib, libboost_atomic.so.*          -> ./dist/lib
 lib, libboost_chrono.so.*          -> ./dist/lib
@@ -33,3 +37,7 @@ lib, libboost_regex.so.*           -> ./dist/lib
 lib, libboost_system.so.*          -> ./dist/lib
 lib, libboost_thread.so.*          -> ./dist/lib
 lib, libcosim.so                   -> ./dist/lib
+lib, libfmilib_shared.so           -> ./dist/lib
+lib, libxerces-c*.so               -> ./dist/lib
+lib, libyaml-cpp.so.*              -> ./dist/lib
+lib, libzip.so.*                   -> ./dist/lib
