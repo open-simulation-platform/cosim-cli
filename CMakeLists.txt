@@ -82,3 +82,4 @@ target_link_libraries(cosim
 
 install(TARGETS cosim RUNTIME DESTINATION bin)
 include(InstallRequiredSystemLibraries)
+install(FILES "LICENSE" "README.md" DESTINATION "doc")
