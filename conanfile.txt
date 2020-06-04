@@ -1,5 +1,5 @@
 [requires]
-libcosim/0.8.0@osp/feature_595-link-dependencies-dynamically
+libcosim/0.8.0@osp/master
 
 [generators]
 cmake
