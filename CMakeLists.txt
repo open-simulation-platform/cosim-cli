@@ -90,3 +90,4 @@ endif()
 
 install(TARGETS cosim RUNTIME DESTINATION bin)
 include(InstallRequiredSystemLibraries)
+install(FILES "LICENSE" "README.md" DESTINATION "doc")

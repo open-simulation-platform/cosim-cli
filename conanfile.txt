@@ -41,3 +41,12 @@ lib, libfmilib_shared.so           -> ./dist/lib
 lib, libxerces-c*.so               -> ./dist/lib
 lib, libyaml-cpp.so.*              -> ./dist/lib
 lib, libzip.so.*                   -> ./dist/lib
+
+., license*     -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., */license*   -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., copying*     -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., */copying*   -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., notice*      -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., */notice*    -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., authors*     -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
+., */authors*   -> ./dist/doc/licenses @ folder=True, ignore_case=True, keep_path=False
