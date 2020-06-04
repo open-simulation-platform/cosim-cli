@@ -20,9 +20,9 @@ lib, boost_system*.dll             -> ./dist/bin
 lib, boost_thread*.dll             -> ./dist/bin
 bin, cosim.dll                     -> ./dist/bin
 bin, fmilib_shared.dll             -> ./dist/bin
-bin, xerces-c*.dll                 -> ./dist/lib
-bin, yaml-cpp.dll                  -> ./dist/lib
-bin, libzip.dll                    -> ./dist/lib
+bin, xerces-c*.dll                 -> ./dist/bin
+bin, yaml-cpp.dll                  -> ./dist/bin
+bin, zip.dll                       -> ./dist/bin
 
 lib, libboost_atomic.so.*          -> ./dist/lib
 lib, libboost_chrono.so.*          -> ./dist/lib
