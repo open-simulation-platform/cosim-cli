@@ -31,6 +31,10 @@ const char* getenv(const char* variableName)
 // Obtain the (platform-specific) application cache path for the current user.
 std::optional<boost::filesystem::path> user_cache_directory_path()
 {
+    if (const auto cachePath = getenv("COSIM_CACHE_PATH")) {
+        return boost::filesystem::path(cachePath);
+    }
+
 #if defined(_WIN32)
     if (const auto localAppData = getenv("LocalAppData")) {
         return boost::filesystem::path(localAppData);
