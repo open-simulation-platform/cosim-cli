@@ -38,7 +38,12 @@ public:
                "\n"
                "This command allows for safe removal of files from the cache.  "
                "It will remove all files that are not currently in use by another "
-               "cosim process.";
+               "cosim process.\n"
+               "\n"
+               "The location of the cache can be set using the environment "
+               "variable COSIM_CACHE_PATH.  "
+               "If this is not defined, the (platform-specific) default "
+               "application cache path for the current user will be used instead.";
     }
 
     void setup_options(
