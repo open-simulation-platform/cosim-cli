@@ -252,8 +252,9 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
 
     cosim::real_time_timer timer;
     if (runOptions.rtf_target) {
-        timer.set_real_time_factor_target(*runOptions.rtf_target);
-        timer.enable_real_time_simulation();
+        auto rtConfig = timer.get_real_time_config();
+        rtConfig->real_time_factor_target.store(*runOptions.rtf_target);
+        rtConfig->real_time_simulation.store(true);
     }
 
     auto currentPath = boost::filesystem::current_path();
