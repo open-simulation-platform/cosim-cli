@@ -200,8 +200,9 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
         *uriResolver,
         runOptions.begin_time);
     if (runOptions.rtf_target) {
-        execution.set_real_time_factor_target(*runOptions.rtf_target);
-        execution.enable_real_time_simulation();
+        auto rtConfig = execution.get_real_time_config();
+        rtConfig->real_time_factor_target.store(*runOptions.rtf_target);
+        rtConfig->real_time_simulation.store(true);
     }
 
     auto outputObserver = make_file_observer(
