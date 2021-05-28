@@ -49,6 +49,8 @@ public:
      */
     virtual std::optional<int> handle_options(
         const boost::program_options::variables_map& args) = 0;
+
+    virtual ~cli_option_set() = default;
 };
 
 
@@ -105,6 +107,8 @@ public:
      *      An exit code for the program.
      */
     virtual int run(const boost::program_options::variables_map& args) const = 0;
+
+    virtual ~cli_subcommand() = default;
 };
 
 
