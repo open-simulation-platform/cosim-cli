@@ -8,9 +8,9 @@
 #include "cache.hpp"
 #include "run_common.hpp"
 
-#include <boost/filesystem.hpp>
 #include <cosim/algorithm/fixed_step_algorithm.hpp>
 #include <cosim/execution.hpp>
+#include <cosim/fs_portability.hpp>
 #include <cosim/manipulator/scenario_manager.hpp>
 #include <cosim/observer/file_observer.hpp>
 #include <cosim/observer/observer.hpp>
@@ -73,13 +73,13 @@ namespace
 {
 
 cosim::execution load_system_structure(
-    const boost::filesystem::path& path,
+    const cosim::filesystem::path& path,
     cosim::model_uri_resolver& uriResolver,
     cosim::time_point startTime)
 {
     if (path.extension() == ".xml" ||
-        (boost::filesystem::is_directory(path) &&
-            boost::filesystem::exists(path / "OspSystemStructure.xml"))) {
+        (cosim::filesystem::is_directory(path) &&
+            cosim::filesystem::exists(path / "OspSystemStructure.xml"))) {
         const auto config = cosim::load_osp_config(path, uriResolver);
         auto execution = cosim::execution(
             startTime,
@@ -106,17 +106,17 @@ cosim::execution load_system_structure(
 
 
 std::unique_ptr<cosim::observer> make_file_observer(
-    const boost::filesystem::path& outputDir,
+    const cosim::filesystem::path& outputDir,
     const std::string& outputConfigArg,
-    const boost::filesystem::path& systemStructurePath)
+    const cosim::filesystem::path& systemStructurePath)
 {
     if (outputConfigArg == "auto") {
         const auto systemStructureDir =
-            boost::filesystem::is_directory(systemStructurePath)
+            cosim::filesystem::is_directory(systemStructurePath)
             ? systemStructurePath
             : systemStructurePath.parent_path();
         const auto autoConfigFile = systemStructureDir / "LogConfig.xml";
-        if (boost::filesystem::exists(autoConfigFile)) {
+        if (cosim::filesystem::exists(autoConfigFile)) {
             return std::make_unique<cosim::file_observer>(outputDir, autoConfigFile);
         } else {
             return std::make_unique<cosim::file_observer>(outputDir);
@@ -133,7 +133,7 @@ std::unique_ptr<cosim::observer> make_file_observer(
 
 void load_scenario(
     cosim::execution& execution,
-    const boost::filesystem::path& scenarioPath,
+    const cosim::filesystem::path& scenarioPath,
     cosim::time_point startTime)
 {
     auto s = std::make_shared<cosim::scenario_manager>();
@@ -192,7 +192,7 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
 {
     const auto runOptions = get_common_run_options(args);
     const auto systemStructurePath =
-        boost::filesystem::path(args["system_structure_path"].as<std::string>());
+        cosim::filesystem::path(args["system_structure_path"].as<std::string>());
 
     const auto uriResolver = caching_model_uri_resolver();
     auto execution = load_system_structure(

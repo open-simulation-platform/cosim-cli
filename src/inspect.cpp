@@ -8,7 +8,7 @@
 #include "cache.hpp"
 #include "tools.hpp"
 
-#include <boost/filesystem.hpp>
+#include <cosim/fs_portability.hpp>
 #include <cosim/orchestration.hpp>
 #include <cosim/uri.hpp>
 
@@ -71,8 +71,8 @@ void print_variable_descriptions(const cosim::model_description& md)
 
 int inspect_subcommand::run(const boost::program_options::variables_map& args) const
 {
-    auto currentPath = boost::filesystem::current_path();
-    currentPath += boost::filesystem::path::preferred_separator;
+    auto currentPath = cosim::filesystem::current_path();
+    currentPath += cosim::filesystem::path::preferred_separator;
     const auto baseUri = cosim::path_to_file_uri(currentPath);
     const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
     const auto uriResolver = caching_model_uri_resolver();

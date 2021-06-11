@@ -5,8 +5,8 @@
  */
 #include "cache.hpp"
 
-#include <boost/filesystem.hpp>
 #include <cosim/file_cache.hpp>
+#include <cosim/fs_portability.hpp>
 #include <cosim/log/logger.hpp>
 
 #include <cstdlib>
@@ -29,31 +29,31 @@ const char* getenv(const char* variableName)
 }
 
 // Obtain the (platform-specific) application cache path for the current user.
-std::optional<boost::filesystem::path> user_cache_directory_path()
+std::optional<cosim::filesystem::path> user_cache_directory_path()
 {
     if (const auto cachePath = getenv("COSIM_CACHE_PATH")) {
-        return boost::filesystem::path(cachePath);
+        return cosim::filesystem::path(cachePath);
     }
 
 #if defined(_WIN32)
     if (const auto localAppData = getenv("LocalAppData")) {
-        return boost::filesystem::path(localAppData);
+        return cosim::filesystem::path(localAppData);
     }
     if (const auto userProfile = getenv("UserProfile")) {
-        return boost::filesystem::path(userProfile) / "AppData" / "Local";
+        return cosim::filesystem::path(userProfile) / "AppData" / "Local";
     }
 
 #elif defined(__APPLE__)
     if (const auto home = getenv("HOME")) {
-        return boost::filesystem::path(home) / "Library" / "Caches";
+        return cosim::filesystem::path(home) / "Library" / "Caches";
     }
 
 #else // some other UNIX-like system
     if (const auto xdgCacheHome = getenv("XDG_CACHE_HOME")) {
-        return boost::filesystem::path(xdgCacheHome);
+        return cosim::filesystem::path(xdgCacheHome);
     }
     if (const auto home = getenv("HOME")) {
-        return boost::filesystem::path(home) / ".cache";
+        return cosim::filesystem::path(home) / ".cache";
     }
 
 #endif
@@ -61,7 +61,7 @@ std::optional<boost::filesystem::path> user_cache_directory_path()
 }
 
 // Returns the (platform-specific) user cache path for this application.
-std::optional<boost::filesystem::path> cache_directory_path()
+std::optional<cosim::filesystem::path> cache_directory_path()
 {
     if (const auto userCache = user_cache_directory_path()) {
         return *userCache / "cosim";

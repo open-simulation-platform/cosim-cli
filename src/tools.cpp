@@ -5,7 +5,7 @@
  */
 #include "tools.hpp"
 
-#include <boost/filesystem.hpp>
+#include <cosim/fs_portability.hpp>
 
 #ifdef _WIN32
 #    include <cctype>
@@ -24,7 +24,7 @@ cosim::uri to_uri(std::string_view str)
         uri.scheme()->size() == 1 &&
         std::isalpha(static_cast<unsigned char>(uri.scheme()->front()));
     if (schemeLooksLikeDriveLetter || !uri.scheme()) {
-        uri = cosim::path_to_file_uri(boost::filesystem::path(str.begin(), str.end()));
+        uri = cosim::path_to_file_uri(cosim::filesystem::path(str.begin(), str.end()));
     }
 #endif
     return uri;
