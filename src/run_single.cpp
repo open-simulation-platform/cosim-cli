@@ -13,8 +13,8 @@
 #include "tools.hpp"
 
 #include <boost/container/vector.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <cosim/fs_portability.hpp>
 #include <cosim/model_description.hpp>
 #include <cosim/orchestration.hpp>
 #include <cosim/time.hpp>
@@ -155,7 +155,7 @@ class csv_output_writer
 public:
     csv_output_writer(
         std::shared_ptr<cosim::async_slave> simulator,
-        const boost::filesystem::path& outputFile)
+        const cosim::filesystem::path& outputFile)
         : simulator_(simulator)
     {
         assert(simulator);
@@ -257,8 +257,8 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
         rtConfig->real_time_simulation.store(true);
     }
 
-    auto currentPath = boost::filesystem::current_path();
-    currentPath += boost::filesystem::path::preferred_separator;
+    auto currentPath = cosim::filesystem::current_path();
+    currentPath += cosim::filesystem::path::preferred_separator;
     const auto baseUri = cosim::path_to_file_uri(currentPath);
     const auto uriReference = to_uri(args["uri_or_path"].as<std::string>());
     const auto uriResolver = caching_model_uri_resolver();
