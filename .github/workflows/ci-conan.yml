@@ -23,12 +23,12 @@ jobs:
         build_type: [Debug, Release]
         compiler_version: [7, 8, 9]
         compiler_libcxx: [libstdc++11]
-        option_fmuproxy: ['fmuproxy=True', 'fmuproxy=False']
+        option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
 
         exclude:
           - os: ubuntu-18.04
             build_type: Debug
-            option_fmuproxy: 'fmuproxy=True'
+            option_proxyfmu: 'proxyfmu=True'
 
     steps:
       - uses: actions/checkout@v2
@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_fmuproxy }} ../
+          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} ../
           for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ../
           cmake --build .
@@ -51,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_fmuproxy }}
+          name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_proxyfmu }}
           path: build/dist
 
   conan-on-windows:
@@ -63,12 +63,12 @@ jobs:
         os: [windows-2016]
         build_type: [Debug, Release]
         compiler_version: [15]
-        option_fmuproxy: ['fmuproxy=True', 'fmuproxy=False']
+        option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
 
         exclude:
           - os: windows-2016
             build_type: Debug
-            option_fmuproxy: 'fmuproxy=True'
+            option_proxyfmu: 'proxyfmu=True'
 
     steps:
       - uses: actions/checkout@v2
@@ -83,12 +83,12 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -o libcosim:${{ matrix.option_fmuproxy }} ../
+          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -o libcosim:${{ matrix.option_proxyfmu }} ../
           cmake -A x64 ../
           cmake --build . --config ${{ matrix.build_type }}
           cmake --build . --config ${{ matrix.build_type }} --target install
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.option_fmuproxy }}
+          name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.option_proxyfmu }}
           path: build/dist
