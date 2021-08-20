@@ -37,7 +37,6 @@ jobs:
           cat <<'EOF' >/tmp/osp-builder-docker/entrypoint.sh
           #!/bin/bash -v
           set -eu
-          cd /mnt/source/build
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
           conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} ../
           for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done
@@ -51,7 +50,7 @@ jobs:
           docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
         run: |
-          docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source osp-builder
+          docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source/build osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
