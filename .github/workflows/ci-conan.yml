@@ -3,44 +3,41 @@ name: cosim CI Conan
 # This workflow is triggered on pushes to the repository.
 on: [push, workflow_dispatch]
 
-env:
-  CONAN_LOGIN_USERNAME_OSP: ${{ secrets.osp_artifactory_usr }}
-  CONAN_PASSWORD_OSP: ${{ secrets.osp_artifactory_pwd }}
-  CONAN_REVISIONS_ENABLED: 1
-  CONAN_NON_INTERACTIVE: True
-
 jobs:
   conan-on-linux:
     name: Conan
-    runs-on: ${{ matrix.os }}
-    env:
-      CC: gcc-${{ matrix.compiler_version }}
-      CXX: g++-${{ matrix.compiler_version }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04]
         build_type: [Debug, Release]
         compiler_version: [7, 8, 9]
         compiler_libcxx: [libstdc++11]
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
 
-        exclude:
-          - os: ubuntu-18.04
-            build_type: Debug
-            option_proxyfmu: 'proxyfmu=True'
-
     steps:
       - uses: actions/checkout@v2
-      - name: Install prerequisites
+      - name: Generate Dockerfile
         run: |
-          sudo apt-get install -y --no-install-recommends g++-8
-          sudo pip3 install --upgrade setuptools pip
-          sudo pip3 install conan
-      - name: Configure Conan
-        run: conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-      - name: Build
+          mkdir /tmp/osp-builder-docker
+          cat <<'EOF' >/tmp/osp-builder-docker/Dockerfile
+          FROM conanio/gcc${{ matrix.compiler_version }}
+          FROM conanio/gcc${{ matrix.compiler_version }}
+          ENV CONAN_LOGIN_USERNAME_OSP=${{ secrets.osp_artifactory_usr }}
+          ENV CONAN_PASSWORD_OSP=${{ secrets.osp_artifactory_pwd }}
+          ENV CONAN_REVISIONS_ENABLED=1
+          ENV CONAN_NON_INTERACTIVE=1
+          ENV CONAN_USE_ALWAYS_SHORT_PATHS=1
+          COPY entrypoint.sh /
+          ENTRYPOINT /entrypoint.sh
+          EOF
+      - name: Generate entrypoint.sh
         run: |
+          cat <<'EOF' >/tmp/osp-builder-docker/entrypoint.sh
+          #!/bin/bash -v
+          set -eu
+          cd /mnt/source
+          conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
           mkdir build
           cd build
           conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} ../
@@ -48,6 +45,8 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ../
           cmake --build .
           cmake --build . --target install
+          EOF
+          chmod 0755 /tmp/osp-builder-docker/entrypoint.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -57,6 +56,12 @@ jobs:
   conan-on-windows:
     name: Conan
     runs-on: ${{ matrix.os }}
+    env:
+      CONAN_LOGIN_USERNAME_OSP: ${{ secrets.osp_artifactory_usr }}
+      CONAN_PASSWORD_OSP: ${{ secrets.osp_artifactory_pwd }}
+      CONAN_REVISIONS_ENABLED: 1
+      CONAN_NON_INTERACTIVE: 1
+      CONAN_USE_ALWAYS_SHORT_PATHS: 1
     strategy:
       fail-fast: false
       matrix:
