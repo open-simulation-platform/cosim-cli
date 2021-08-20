@@ -47,6 +47,12 @@ jobs:
           cmake --build . --target install
           EOF
           chmod 0755 /tmp/osp-builder-docker/entrypoint.sh
+      - name: Build Docker image
+        run: |
+          docker build -t osp-builder /tmp/osp-builder-docker/
+      - name: Build cosim
+        run: |
+          docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source:ro osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
