@@ -32,12 +32,12 @@ jobs:
           EOF
       - name: Generate entrypoint.sh
         run: |
+          mkdir build
+          chmod 777 build
           cat <<'EOF' >/tmp/osp-builder-docker/entrypoint.sh
           #!/bin/bash -v
           set -eu
-          cd /mnt/source
-          mkdir build
-          cd build
+          cd /mnt/source/build
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
           conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} ..
           for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done
