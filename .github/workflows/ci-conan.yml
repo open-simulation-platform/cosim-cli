@@ -22,7 +22,6 @@ jobs:
           mkdir /tmp/osp-builder-docker
           cat <<'EOF' >/tmp/osp-builder-docker/Dockerfile
           FROM conanio/gcc${{ matrix.compiler_version }}
-          FROM conanio/gcc${{ matrix.compiler_version }}
           ENV CONAN_LOGIN_USERNAME_OSP=${{ secrets.osp_artifactory_usr }}
           ENV CONAN_PASSWORD_OSP=${{ secrets.osp_artifactory_pwd }}
           ENV CONAN_REVISIONS_ENABLED=1
@@ -37,10 +36,11 @@ jobs:
           cat <<'EOF' >/tmp/osp-builder-docker/entrypoint.sh
           #!/bin/bash -v
           set -eu
+          cd /mnt/source/build
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-          conan install .. -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} ../
+          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} ..
           for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done
-          cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ../
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
           cmake --build .
           cmake --build . --target install
           EOF
@@ -50,7 +50,7 @@ jobs:
           docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
         run: |
-          docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source/build osp-builder
+          docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
