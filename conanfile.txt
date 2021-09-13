@@ -1,6 +1,5 @@
 [requires]
-libcosim/0.8.0@osp/stable
-proxyfmu/0.2.3@osp/testing-workdir
+libcosim/0.9.0@osp/testing
 
 [generators]
 cmake
