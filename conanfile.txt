@@ -1,5 +1,5 @@
 [requires]
-libcosim/0.8.1@osp/stable
+libcosim/0.9.0@osp/testing
 
 [generators]
 cmake
