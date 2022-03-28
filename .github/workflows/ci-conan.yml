@@ -72,15 +72,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2016]
+        os: [windows-2019]
         build_type: [Debug, Release]
-        compiler_version: [15]
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
-
-        exclude:
-          - os: windows-2016
-            build_type: Debug
-            option_proxyfmu: 'proxyfmu=True'
 
     steps:
       - uses: actions/checkout@v2
@@ -95,7 +89,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -o libcosim:${{ matrix.option_proxyfmu }} -b missing ../
+          conan install -s build_type=${{ matrix.build_type }} -o libcosim:${{ matrix.option_proxyfmu }} -b missing ../
           cmake -A x64 ../
           cmake --build . --config ${{ matrix.build_type }}
           cmake --build . --config ${{ matrix.build_type }} --target install
