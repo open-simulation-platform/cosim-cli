@@ -26,6 +26,7 @@ struct common_run_option_values
     cosim::time_point end_time;
     std::optional<double> rtf_target;
     std::optional<int> mr_progress_resolution;
+    std::optional<unsigned int> worker_thread_count;
 };
 
 

@@ -36,6 +36,11 @@ void setup_common_run_options(
             "t is the current logical time and d is the amount of logical "
             "time that has passed since the start of the simulation.  "
             "t and d are floating-point numbers while n is an integer.")
+        ("worker-threads",
+            boost::program_options::value<unsigned int>()->value_name("worker-threads")->implicit_value(0),
+            "Enables spawning worker-threads to parallelize the work load. "
+            "The number of worker-threads may optionally be specified, "
+            "with a default value of 0.")
         ("real-time",
             boost::program_options::value<double>()->value_name("target_rtf")->implicit_value(1),
             "Enables real-time-synchronised simulations.  A target RTF may "
@@ -66,6 +71,9 @@ common_run_option_values get_common_run_options(
     }
     if (args.count("real-time")) {
         values.rtf_target = args["real-time"].as<double>();
+    }
+    if (args.count("worker-threads")) {
+        values.worker_thread_count = args["worker-threads"].as<unsigned int>();
     }
     return values;
 }

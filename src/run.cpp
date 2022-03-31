@@ -75,7 +75,8 @@ namespace
 cosim::execution load_system_structure(
     const cosim::filesystem::path& path,
     cosim::model_uri_resolver& uriResolver,
-    cosim::time_point startTime)
+    cosim::time_point startTime,
+    std::optional<unsigned int> workerThreadCount)
 {
     if (path.extension() == ".xml" ||
         (cosim::filesystem::is_directory(path) &&
@@ -83,7 +84,7 @@ cosim::execution load_system_structure(
         const auto config = cosim::load_osp_config(path, uriResolver);
         auto execution = cosim::execution(
             startTime,
-            std::make_shared<cosim::fixed_step_algorithm>(config.step_size));
+            std::make_shared<cosim::fixed_step_algorithm>(config.step_size, workerThreadCount));
         cosim::inject_system_structure(
             execution,
             config.system_structure,
@@ -198,7 +199,8 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
     auto execution = load_system_structure(
         systemStructurePath,
         *uriResolver,
-        runOptions.begin_time);
+        runOptions.begin_time,
+        runOptions.worker_thread_count);
     if (runOptions.rtf_target) {
         auto rtConfig = execution.get_real_time_config();
         rtConfig->real_time_factor_target.store(*runOptions.rtf_target);
