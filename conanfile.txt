@@ -1,5 +1,5 @@
 [requires]
-libcosim/0.8.3@osp/stable
+libcosim/0.8.3@osp/testing
 
 [generators]
 cmake
@@ -10,7 +10,6 @@ bin, boost_atomic*.dll             -> ./dist/bin
 bin, boost_chrono*.dll             -> ./dist/bin
 bin, boost_context*.dll            -> ./dist/bin
 bin, boost_date_time*.dll          -> ./dist/bin
-bin, boost_fiber*.dll              -> ./dist/bin
 bin, boost_filesystem*.dll         -> ./dist/bin
 bin, boost_log*.dll                -> ./dist/bin
 bin, boost_log_setup*.dll          -> ./dist/bin
@@ -29,7 +28,6 @@ lib, libboost_atomic.so.*          -> ./dist/lib
 lib, libboost_chrono.so.*          -> ./dist/lib
 lib, libboost_context.so.*         -> ./dist/lib
 lib, libboost_date_time.so.*       -> ./dist/lib
-lib, libboost_fiber.so.*           -> ./dist/lib
 lib, libboost_filesystem.so.*      -> ./dist/lib
 lib, libboost_log.so.*             -> ./dist/lib
 lib, libboost_log_setup.so.*       -> ./dist/lib

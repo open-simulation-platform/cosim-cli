@@ -154,7 +154,7 @@ class csv_output_writer
 {
 public:
     csv_output_writer(
-        std::shared_ptr<cosim::async_slave> simulator,
+        std::shared_ptr<cosim::slave> simulator,
         const cosim::filesystem::path& outputFile)
         : simulator_(simulator)
     {
@@ -167,7 +167,7 @@ public:
         std::stringstream integerVarHeader;
         std::stringstream booleanVarHeader;
         std::stringstream stringVarHeader;
-        for (const auto& var : simulator_->model_description().get().variables) {
+        for (const auto& var : simulator_->model_description().variables) {
             switch (var.type) {
                 case cosim::variable_type::real:
                     realVarHeader << ',' << var.name << " [" << var.reference << ' ' << var.type << ' ' << var.causality << ']';
@@ -204,8 +204,8 @@ public:
                                     gsl::make_span(realVariables_),
                                     gsl::make_span(integerVariables_),
                                     gsl::make_span(booleanVariables_),
-                                    gsl::make_span(stringVariables_))
-                                .get();
+                                    gsl::make_span(stringVariables_));
+
         outputStream_ << std::fixed << cosim::to_double_time_point(t) << std::defaultfloat;
         for (const auto& v : values.real) {
             outputStream_ << ',' << v;
@@ -223,7 +223,7 @@ public:
     }
 
 private:
-    std::shared_ptr<cosim::async_slave> simulator_;
+    std::shared_ptr<cosim::slave> simulator_;
     std::ofstream outputStream_;
 
     boost::container::vector<cosim::value_reference> realVariables_;
@@ -272,7 +272,7 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
     }
 
     const auto simulator = model->instantiate("simulator");
-    simulator->setup(runOptions.begin_time, runOptions.end_time, {}).get();
+    simulator->setup(runOptions.begin_time, runOptions.end_time, {});
     if (initialValues) {
         simulator
             ->set_variables(
@@ -283,21 +283,20 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
                 gsl::make_span(initialValues->booleanVariables),
                 gsl::make_span(initialValues->booleanValues),
                 gsl::make_span(initialValues->stringVariables),
-                gsl::make_span(initialValues->stringValues))
-            .get();
+                gsl::make_span(initialValues->stringValues));
     }
 
     auto output = csv_output_writer(
         simulator,
         args["output-file"].as<std::string>());
 
-    simulator->start_simulation().get();
+    simulator->start_simulation();
     output.update(runOptions.begin_time);
     for (auto t = runOptions.begin_time; t < runOptions.end_time;) {
         const auto dt = std::min(runOptions.end_time - t, stepSize);
-        const auto stepResult = simulator->do_step(t, stepSize).get();
+        const auto stepResult = simulator->do_step(t, stepSize);
         if (stepResult != cosim::step_result::complete) {
-            simulator->end_simulation().get();
+            simulator->end_simulation();
             throw std::runtime_error(
                 "Simulator was unable to complete time step at t=" +
                 std::to_string(cosim::to_double_time_point(t)));
@@ -307,6 +306,6 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
         timer.sleep(t);
         progress.update(t);
     }
-    simulator->end_simulation().get();
+    simulator->end_simulation();
     return 0;
 }

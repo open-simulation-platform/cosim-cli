@@ -225,6 +225,6 @@ int run_subcommand::run(const boost::program_options::variables_map& args) const
             10,
             runOptions.mr_progress_resolution));
 
-    execution.simulate_until(runOptions.end_time).get();
+    execution.simulate_until(runOptions.end_time);
     return 0;
 }
