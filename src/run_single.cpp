@@ -199,12 +199,13 @@ public:
 
     void update(cosim::time_point t)
     {
-        const auto values = simulator_
-                                ->get_variables(
-                                    gsl::make_span(realVariables_),
-                                    gsl::make_span(integerVariables_),
-                                    gsl::make_span(booleanVariables_),
-                                    gsl::make_span(stringVariables_));
+        cosim::slave::variable_values values;
+        simulator_->get_variables(
+            &values,
+            gsl::make_span(realVariables_),
+            gsl::make_span(integerVariables_),
+            gsl::make_span(booleanVariables_),
+            gsl::make_span(stringVariables_));
 
         outputStream_ << std::fixed << cosim::to_double_time_point(t) << std::defaultfloat;
         for (const auto& v : values.real) {
