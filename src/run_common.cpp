@@ -39,8 +39,9 @@ void setup_common_run_options(
         ("worker-threads",
             boost::program_options::value<unsigned int>()->value_name("worker-threads")->implicit_value(0),
             "Enables spawning worker-threads to parallelize the work load. "
-            "The number of worker-threads may optionally be specified, "
-            "with a default value of 0.")
+            "If not specified, the number of worker-threads is set to the "
+            "number of the system hardware cores -1. Worker-threads comes "
+            "in addition to the application thread.")
         ("real-time",
             boost::program_options::value<double>()->value_name("target_rtf")->implicit_value(1),
             "Enables real-time-synchronised simulations.  A target RTF may "
