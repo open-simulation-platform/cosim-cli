@@ -37,10 +37,10 @@ void setup_common_run_options(
             "time that has passed since the start of the simulation.  "
             "t and d are floating-point numbers while n is an integer.")
         ("worker-threads",
-            boost::program_options::value<unsigned int>()->value_name("worker-threads")->implicit_value(0),
+            boost::program_options::value<int>()->value_name("worker-threads")->implicit_value(-1),
             "Enables spawning worker-threads to parallelize the work load. "
             "If not specified, the number of worker-threads is set to the "
-            "number of the system hardware cores -1. Worker-threads comes "
+            "number of the system hardware cores - 1. Worker-threads comes "
             "in addition to the application thread.")
         ("real-time",
             boost::program_options::value<double>()->value_name("target_rtf")->implicit_value(1),
@@ -73,8 +73,9 @@ common_run_option_values get_common_run_options(
     if (args.count("real-time")) {
         values.rtf_target = args["real-time"].as<double>();
     }
-    if (args.count("worker-threads")) {
-        values.worker_thread_count = args["worker-threads"].as<unsigned int>();
+    auto worker_threads = args["worker-threads"].as<int>();
+    if (worker_threads != -1) {
+        values.worker_thread_count = static_cast<unsigned int>(worker_threads);
     }
     return values;
 }
