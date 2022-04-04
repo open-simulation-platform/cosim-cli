@@ -74,7 +74,7 @@ common_run_option_values get_common_run_options(
         values.rtf_target = args["real-time"].as<double>();
     }
     auto worker_threads = args["worker-threads"].as<int>();
-    if (worker_threads != -1) {
+    if (worker_threads >= 0) {
         values.worker_thread_count = static_cast<unsigned int>(worker_threads);
     }
     return values;
