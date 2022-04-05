@@ -37,11 +37,13 @@ void setup_common_run_options(
             "time that has passed since the start of the simulation.  "
             "t and d are floating-point numbers while n is an integer.")
         ("worker-threads",
-            boost::program_options::value<int>()->value_name("worker-threads")->implicit_value(-1),
+            boost::program_options::value<int>()->value_name("worker-threads")->default_value(-1),
             "Enables spawning worker-threads to parallelize the work load. "
-            "If not specified, the number of worker-threads is set to the "
-            "number of the system hardware cores - 1. Worker-threads comes "
-            "in addition to the application thread.")
+            "The default (represented by the value -1) is to use the number "
+            "of system hardware cores minus one. Worker-threads comes "
+            "in addition to the application thread. --worker-threads=0 "
+            "will result in one application thread and no additional "
+            "worker threads.")
         ("real-time",
             boost::program_options::value<double>()->value_name("target_rtf")->implicit_value(1),
             "Enables real-time-synchronised simulations.  A target RTF may "
