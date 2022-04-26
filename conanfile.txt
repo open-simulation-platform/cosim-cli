@@ -1,5 +1,6 @@
 [requires]
 libcosim/0.9.0@osp/stable
+zlib/1.2.12
 
 [generators]
 cmake
