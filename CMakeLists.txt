@@ -40,7 +40,7 @@ else()
 endif()
 
 find_package(libcosim REQUIRED)
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost REQUIRED COMPONENTS program_options REQUIRED)
 
 # ==============================================================================
 # Targets
@@ -76,10 +76,7 @@ add_executable(cosim
     "src/version_option.cpp"
 )
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
-target_link_libraries(cosim
-    PRIVATE
-        libcosim::libcosim
-        Boost::program_options)
+target_link_libraries(cosim PRIVATE libcosim::libcosim Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # This makes the linker set RPATH rather than RUNPATH for the resulting

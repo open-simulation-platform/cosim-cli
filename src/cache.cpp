@@ -9,10 +9,14 @@
 #include <cosim/fs_portability.hpp>
 #include <cosim/log/logger.hpp>
 
-#include <cstdlib>
 #include <optional>
 #include <stdexcept>
 
+
+namespace std
+{
+#include <cstdlib>
+};
 
 namespace
 {
