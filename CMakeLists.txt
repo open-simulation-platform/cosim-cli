@@ -79,7 +79,7 @@ add_executable(cosim
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
 target_link_libraries(cosim
     PRIVATE
-        libcosim::cosim
+        libcosim::libcosim
         Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
