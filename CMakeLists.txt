@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project("cosim" VERSION "0.9.0")
+project("cosim" VERSION "0.10.0")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 
 # To enable verbose when needed
@@ -78,7 +78,7 @@ add_executable(cosim
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
 target_link_libraries(cosim
     PRIVATE
-        libcosim::cosim
+        libcosim::libcosim
         Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
