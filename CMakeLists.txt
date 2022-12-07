@@ -8,7 +8,6 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # ==============================================================================
 # Global internal configuration
 # ==============================================================================
-list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
 
@@ -79,7 +78,7 @@ add_executable(cosim
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
 target_link_libraries(cosim
     PRIVATE
-        libcosim::libcosim
+        libcosim::cosim
         Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
