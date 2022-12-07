@@ -8,6 +8,9 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # ==============================================================================
 # Global internal configuration
 # ==============================================================================
+list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
 
 # Use the highest warning levels and treat all warnings as errors,
 # but ignore a few selected warnings.
