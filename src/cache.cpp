@@ -11,12 +11,7 @@
 
 #include <optional>
 #include <stdexcept>
-
-
-namespace std
-{
 #include <cstdlib>
-};
 
 namespace
 {
