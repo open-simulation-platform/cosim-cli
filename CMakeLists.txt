@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project("cosim" VERSION "0.10.0")
+project("cosim" VERSION "0.8.0")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 
 # To enable verbose when needed
@@ -40,7 +40,7 @@ else()
 endif()
 
 find_package(libcosim REQUIRED)
-find_package(Boost REQUIRED COMPONENTS program_options REQUIRED)
+find_package(Boost REQUIRED COMPONENTS program_options)
 
 # ==============================================================================
 # Targets

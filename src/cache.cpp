@@ -9,9 +9,9 @@
 #include <cosim/fs_portability.hpp>
 #include <cosim/log/logger.hpp>
 
+#include <cstdlib>
 #include <optional>
 #include <stdexcept>
-#include <cstdlib>
 
 namespace
 {
