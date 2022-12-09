@@ -8,8 +8,6 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # ==============================================================================
 # Global internal configuration
 # ==============================================================================
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}")
 
 # Use the highest warning levels and treat all warnings as errors,
 # but ignore a few selected warnings.
@@ -76,7 +74,7 @@ add_executable(cosim
     "src/version_option.cpp"
 )
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
-target_link_libraries(cosim PRIVATE libcosim::libcosim Boost::program_options)
+target_link_libraries(cosim PRIVATE libcosim::cosim Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # This makes the linker set RPATH rather than RUNPATH for the resulting
