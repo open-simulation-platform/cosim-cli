@@ -3,7 +3,6 @@ libcosim/0.10.1@osp/stable
 
 [generators]
 cmake
-cmake_find_package
 virtualrunenv
 
 [imports]
