@@ -13,7 +13,6 @@
 #include <optional>
 #include <stdexcept>
 
-
 namespace
 {
 

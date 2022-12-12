@@ -74,10 +74,7 @@ add_executable(cosim
     "src/version_option.cpp"
 )
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
-target_link_libraries(cosim
-    PRIVATE
-        libcosim::cosim
-        Boost::program_options)
+target_link_libraries(cosim PRIVATE libcosim::cosim Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # This makes the linker set RPATH rather than RUNPATH for the resulting
