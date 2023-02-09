@@ -5,7 +5,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 # To enable verbose when needed
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-# Suppress boost warnings for using version 1.81.0 (may not be needed for futuer release of cmake)
+# Suppress boost warnings for using version 1.81.0 (may not be needed for future release of cmake)
 set(Boost_NO_WARN_NEW_VERSIONS ON)
 
 # ==============================================================================
