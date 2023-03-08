@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9)
-project("cosim" VERSION "0.8.0")
+project("cosim" VERSION "0.7.1")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 
 # To enable verbose when needed
