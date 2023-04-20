@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.9)
 project("cosim" VERSION "0.8.0")
-set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
+#set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
 
 # To enable verbose when needed
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -26,7 +26,7 @@ endif()
 if(APPLE)
     set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 else()
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+#    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 endif()
 
 # ==============================================================================
@@ -37,7 +37,7 @@ if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
     conan_basic_setup(NO_OUTPUT_DIRS)
 else()
-    message(FATAL_ERROR "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first!")
+    #message(FATAL_ERROR "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first!")
 endif()
 
 find_package(libcosim REQUIRED)
