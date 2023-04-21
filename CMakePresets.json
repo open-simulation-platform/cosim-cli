@@ -21,6 +21,25 @@
             "vendor": { "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": { "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}" } }
         },
         {
+            "name": "linux-release",
+            "displayName": "Linux Release",
+            "description": "Ciblez WSL (Sous-système Windows pour Linux) ou un système Linux distant.",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/../osp/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "$env{HOME}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "libcosim_DIR": "$env{HOME}/.vs/osp/install/linux-release/share/libcosim/cmake"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "vendor": { "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": { "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}" } }
+        },
+        {
             "name": "macos-debug",
             "displayName": "macOS Debug",
             "description": "Ciblez un système macOS distant.",
