@@ -82,9 +82,10 @@ cosim::execution load_system_structure(
         (cosim::filesystem::is_directory(path) &&
             cosim::filesystem::exists(path / "OspSystemStructure.xml"))) {
         const auto config = cosim::load_osp_config(path, uriResolver);
+        bool waterfall_effect = config.algorithm == "waterfallFixedStep";
         auto execution = cosim::execution(
             startTime,
-            std::make_shared<cosim::fixed_step_algorithm>(config.step_size, workerThreadCount));
+            std::make_shared<cosim::fixed_step_algorithm>(config.step_size, workerThreadCount, waterfall_effect));
         cosim::inject_system_structure(
             execution,
             config.system_structure,
@@ -152,13 +153,13 @@ public:
         int percentIncrement,
         std::optional<int> mrProgressResolution)
         : logger_(startTime, duration, percentIncrement, mrProgressResolution)
-    {}
+    { }
 
 private:
-    void simulator_added(cosim::simulator_index, cosim::observable*, cosim::time_point) override {}
-    void simulator_removed(cosim::simulator_index, cosim::time_point) override {}
-    void variables_connected(cosim::variable_id, cosim::variable_id, cosim::time_point) override {}
-    void variable_disconnected(cosim::variable_id, cosim::time_point) override {}
+    void simulator_added(cosim::simulator_index, cosim::observable*, cosim::time_point) override { }
+    void simulator_removed(cosim::simulator_index, cosim::time_point) override { }
+    void variables_connected(cosim::variable_id, cosim::variable_id, cosim::time_point) override { }
+    void variable_disconnected(cosim::variable_id, cosim::time_point) override { }
 
     void simulation_initialized(
         cosim::step_number /*firstStep*/,
@@ -182,7 +183,7 @@ private:
         cosim::duration,
         cosim::time_point)
         override
-    {}
+    { }
 
     progress_logger logger_;
 };
