@@ -32,7 +32,7 @@ jobs:
           set -eu
           cd /mnt/source
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} --build=missing
+          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
           cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build
           cmake --build build --target install
@@ -71,7 +71,7 @@ jobs:
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
       - name: Build
         run: |
-          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -o libcosim:${{ matrix.option_proxyfmu }} --build=missing
+          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
           cmake -A x64 -B build -S . "-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
           cmake --build build --config ${{ matrix.build_type }}
           cmake --build build --config ${{ matrix.build_type }} --target install
