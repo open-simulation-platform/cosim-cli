@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [Debug, Release]
-        compiler_version: [9]
+        compiler_version: [11]
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
 
     steps:
@@ -30,7 +30,7 @@ jobs:
           #!/bin/bash -v
           set -eu
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-          conan install /mnt/source --output-folder=build -s build_type=${{ matrix.build_type }} -s:b compiler.cppstd=17 -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
+          conan install /mnt/source --output-folder=build -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
           cmake -B build -S /mnt/source -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build
           cmake --build build --target install
