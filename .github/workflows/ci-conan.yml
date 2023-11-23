@@ -23,7 +23,6 @@ jobs:
           FROM conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
           COPY entrypoint.sh /
           ENTRYPOINT /entrypoint.sh
-          USER root
           EOF
       - name: Generate entrypoint.sh
         run: |
