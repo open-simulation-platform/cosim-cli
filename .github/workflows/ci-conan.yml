@@ -15,6 +15,7 @@ jobs:
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
     container:
       image: conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
+      options: --privileged
     steps:
       - uses: actions/checkout@v4
       - name: Configure Conan
