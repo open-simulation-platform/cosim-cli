@@ -41,7 +41,9 @@ jobs:
       - name: Build Docker image
         run: docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
-        run: docker run --rm -v $(pwd):/mnt/source osp-builder
+        run: |
+          mkdir -m 0777 build
+          docker run --rm -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
