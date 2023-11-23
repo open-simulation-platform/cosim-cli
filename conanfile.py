@@ -48,7 +48,9 @@ class CosimCLIConan(ConanFile):
             self._import_executables(self.dependencies["proxyfmu"], bindir, ["*"])
 
         # Generate build system
-        CMakeToolchain(self).generate()
+        tc = CMakeToolchain(self)
+        tc.user_presets_path = False # Don't touch source directory.
+        tc.generate()
         CMakeDeps(self).generate()
 
     def _import_dynamic_libs(self, dependency, target_dir, patterns):
