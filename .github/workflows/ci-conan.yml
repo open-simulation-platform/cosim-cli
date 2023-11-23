@@ -30,8 +30,9 @@ jobs:
           #!/bin/bash -v
           set -eu
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-          conan install /mnt/source --output-folder=build -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
-          cmake -B build -S /mnt/source -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cd /mnt/source
+          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
+          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build
           cmake --build build --target install
           EOF
@@ -40,6 +41,7 @@ jobs:
         run: docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
         run: |
+          mkdir -m 0777 -p build/dist
           docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v3
