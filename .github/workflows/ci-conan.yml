@@ -17,7 +17,7 @@ jobs:
       image: conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
       options: --privileged
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Configure Conan
         run: conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
       - name: Install dependencies
