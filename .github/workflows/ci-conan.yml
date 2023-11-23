@@ -1,4 +1,4 @@
-name: Build cosim-cli
+name: CI
 
 # This workflow is triggered on pushes to the repository.
 on: [push, workflow_dispatch]
@@ -13,34 +13,20 @@ jobs:
         build_type: [Debug, Release]
         compiler_version: [9]
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
-
+    container:
+      image: conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
     steps:
       - uses: actions/checkout@v4
-      - name: Generate Dockerfile
+      - name: Configure Conan
+        run: conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
+      - name: Install dependencies
+        run: conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -s:b compiler.cppstd=17 -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
+      - name: Generate build system
+        run: cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      - name: Build
         run: |
-          mkdir /tmp/osp-builder-docker
-          cat <<'EOF' >/tmp/osp-builder-docker/Dockerfile
-          FROM conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
-          COPY entrypoint.sh /
-          ENTRYPOINT /entrypoint.sh
-          EOF
-      - name: Generate entrypoint.sh
-        run: |
-          cat <<'EOF' >/tmp/osp-builder-docker/entrypoint.sh
-          #!/bin/bash -v
-          set -eu
-          cd /mnt/source
-          conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -s:b compiler.cppstd=17 -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
-          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build
           cmake --build build --target install
-          EOF
-          chmod 0777 /tmp/osp-builder-docker/entrypoint.sh
-      - name: Build Docker image
-        run: docker build -t osp-builder /tmp/osp-builder-docker/
-      - name: Build cosim
-        run: docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
