@@ -1,11 +1,11 @@
-name: cosim CI Conan
+name: Build cosim-cli
 
 # This workflow is triggered on pushes to the repository.
 on: [push, workflow_dispatch]
 
 jobs:
-  conan-on-linux:
-    name: Conan
+  linux:
+    name: Linux
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -16,59 +16,42 @@ jobs:
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Generate Dockerfile
         run: |
           mkdir /tmp/osp-builder-docker
           cat <<'EOF' >/tmp/osp-builder-docker/Dockerfile
-          FROM conanio/gcc${{ matrix.compiler_version }}
-          USER root
-          RUN apt-get update && apt-get install -y --force-yes patchelf
-          ENV CONAN_LOGIN_USERNAME_OSP=${{ secrets.osp_artifactory_usr }}
-          ENV CONAN_PASSWORD_OSP=${{ secrets.osp_artifactory_pwd }}
-          ENV CONAN_REVISIONS_ENABLED=1
-          ENV CONAN_NON_INTERACTIVE=1
-          ENV CONAN_USE_ALWAYS_SHORT_PATHS=1
+          FROM conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
           COPY entrypoint.sh /
           ENTRYPOINT /entrypoint.sh
           EOF
       - name: Generate entrypoint.sh
         run: |
-          mkdir build
-          chmod 777 build
           cat <<'EOF' >/tmp/osp-builder-docker/entrypoint.sh
           #!/bin/bash -v
           set -eu
-          cd /mnt/source/build
+          cd /mnt/source
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-          conan install -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} -b missing ..
-          for f in dist/lib/*; do patchelf --set-rpath \$ORIGIN $f; done
-          cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..
-          cmake --build .
-          cmake --build . --target install
+          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -s compiler.libcxx=${{ matrix.compiler_libcxx }} -o libcosim:${{ matrix.option_proxyfmu }} --build=missing
+          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake --build build
+          cmake --build build --target install
           EOF
           chmod 0777 /tmp/osp-builder-docker/entrypoint.sh
       - name: Build Docker image
-        run: |
-          docker build -t osp-builder /tmp/osp-builder-docker/
+        run: docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
         run: |
           docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_proxyfmu }}
           path: build/dist
 
-  conan-on-windows:
-    name: Conan
+  windows:
+    name: Windows
     runs-on: ${{ matrix.os }}
-    env:
-      CONAN_LOGIN_USERNAME_OSP: ${{ secrets.osp_artifactory_usr }}
-      CONAN_PASSWORD_OSP: ${{ secrets.osp_artifactory_pwd }}
-      CONAN_REVISIONS_ENABLED: 1
-      CONAN_NON_INTERACTIVE: 1
-      CONAN_USE_ALWAYS_SHORT_PATHS: 1
     strategy:
       fail-fast: false
       matrix:
@@ -77,24 +60,23 @@ jobs:
         option_proxyfmu: ['proxyfmu=True', 'proxyfmu=False']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install prerequisites
         run: |
           pip3 install --upgrade setuptools pip
-          pip3 install conan --force-reinstall -v "conan==1.59"
+          pip3 install conan
       - name: Configure Conan
-        run: conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
-      - name: Build
-        shell: bash
         run: |
-          mkdir build
-          cd build
-          conan install -s build_type=${{ matrix.build_type }} -o libcosim:${{ matrix.option_proxyfmu }} -b missing ../
-          cmake -A x64 ../
-          cmake --build . --config ${{ matrix.build_type }}
-          cmake --build . --config ${{ matrix.build_type }} --target install
+          conan profile detect
+          conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
+      - name: Build
+        run: |
+          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -o libcosim:${{ matrix.option_proxyfmu }} --build=missing
+          cmake -A x64 -B build -S . "-DCMAKE_TOOLCHAIN_FILE=build/conan_toolchain.cmake"
+          cmake --build build --config ${{ matrix.build_type }}
+          cmake --build build --config ${{ matrix.build_type }} --target install
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.option_proxyfmu }}
           path: build/dist
