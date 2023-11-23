@@ -23,6 +23,7 @@ jobs:
           FROM conanio/gcc${{ matrix.compiler_version }}-ubuntu16.04
           COPY entrypoint.sh /
           ENTRYPOINT /entrypoint.sh
+          USER root
           EOF
       - name: Generate entrypoint.sh
         run: |
@@ -40,9 +41,7 @@ jobs:
       - name: Build Docker image
         run: docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
-        run: |
-          mkdir -m 0777 -p build/dist
-          docker run --rm --env GITHUB_REF="$GITHUB_REF" -v $(pwd):/mnt/source osp-builder
+        run: docker run --rm -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
