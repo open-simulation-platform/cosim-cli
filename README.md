@@ -59,7 +59,7 @@ conan install -s build_type=Release --build=missing .   &:: Install dependencies
 cmake --preset=conan-default                            &:: Configure build system
 cmake --build --preset=conan-release                    &:: Build
 cmake --build --preset=conan-release --target=install   &:: Install to dist/
-build/Release/dist/bin/cosim help                       &:: Run
+build/dist/bin/cosim help                               &:: Run
 ```
 In both cases, `Release` and `conan-release` can be replaced with `Debug` and
 `conan-debug`, respectively, if you're building for development purposes.

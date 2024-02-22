@@ -31,23 +31,24 @@ jobs:
           set -eu
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
           cd /mnt/source
-          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
-          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          cmake --build build
-          cmake --build build --target install
+          conan install . -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
+          cmake -S . -B build/${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=generators/conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake --build build/${{ matrix.build_type }}
+          cmake --build build/${{ matrix.build_type }} --target install
           EOF
           chmod 0777 /tmp/osp-builder-docker/entrypoint.sh
       - name: Build Docker image
         run: docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
         run: |
+          chmod 0777 $(pwd) # because commands in conanio containers run as an unprivileged user
           mkdir -m 0777 build
           docker run --rm -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_proxyfmu }}
-          path: build/dist
+          path: build/${{ matrix.build_type }}/dist
 
   windows:
     name: Windows
@@ -71,8 +72,8 @@ jobs:
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
       - name: Build
         run: |
-          conan install . --output-folder=build -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
-          cmake -A x64 -B build -S . "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake"
+          conan install . -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
+          cmake -S . -B build "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake" -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
           cmake --build build --config ${{ matrix.build_type }}
           cmake --build build --config ${{ matrix.build_type }} --target install
       - name: Upload artifact
