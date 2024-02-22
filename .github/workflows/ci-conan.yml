@@ -34,6 +34,7 @@ jobs:
           #!/bin/bash -v
           set -eu
           conan remote add osp https://osp.jfrog.io/artifactory/api/conan/conan-local --force
+          ls -l /mnt/source
           cd /mnt/source
           conan install . -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
           cmake --preset=conan-${{ steps.build_type_string.outputs.lowercase }}
@@ -45,7 +46,8 @@ jobs:
         run: docker build -t osp-builder /tmp/osp-builder-docker/
       - name: Build cosim
         run: |
-          chmod 0777 $(pwd) # because the conanio Docker images are set up to run commands as an unprivileged user
+          ls -l ..
+          ls -l .
           mkdir -m 0777 build
           docker run --rm -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
