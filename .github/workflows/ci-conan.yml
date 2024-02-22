@@ -73,7 +73,7 @@ jobs:
       - name: Build
         run: |
           conan install . -s build_type=${{ matrix.build_type }} -o "libcosim/*:${{ matrix.option_proxyfmu }}" --build=missing
-          cmake -S . -B build "-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake" -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
+          cmake -S . -B build "-DCMAKE_TOOLCHAIN_FILE=generators/conan_toolchain.cmake" -DCMAKE_POLICY_DEFAULT_CMP0091=NEW
           cmake --build build --config ${{ matrix.build_type }}
           cmake --build build --config ${{ matrix.build_type }} --target install
       - name: Upload artifact

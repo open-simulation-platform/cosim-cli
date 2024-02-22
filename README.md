@@ -63,17 +63,20 @@ build/dist/bin/cosim help                               &:: Run
 ```
 In both cases, `Release` and `conan-release` can be replaced with `Debug` and
 `conan-debug`, respectively, if you're building for development purposes.
+See the [Conan CMakeToolchain documentation] for more information about CMake
+presets (and what to do if your CMake version doesn't allow you to use them).
 
 The `cmake --target=install` command will copy the resulting `cosim`
-executable to the `build/Release/dist/bin` directory. The shared libraries
+executable to the `build[/Release]/dist/bin` directory. The shared libraries
 that `cosim` depends on will be copied to the same directory or to
-`build/Release/lib`, depending on platform, by the `conan install` command.
-Thus, the `dist` directory contains the entire release bundle. You may also
-choose to install to a different directory by setting the
+`build/Release/dist/lib`, depending on platform, by the `conan install`
+command. Thus, the `dist` directory contains the entire release bundle. You
+may also choose to install to a different directory by setting the
 [`CMAKE_INSTALL_PREFIX`] variable, but note that dependencies won't be
 included in the installation then.
 
 
 [`CMAKE_INSTALL_PREFIX`]: https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html
+[Conan CMakeToolchain documentation]: https://docs.conan.io/2/examples/tools/cmake/cmake_toolchain/build_project_cmake_presets.html
 [libcosim]: https://github.com/open-simulation-platform/libcosim
 [libcosim README]: https://github.com/open-simulation-platform/libcosim#readme
