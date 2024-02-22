@@ -1,7 +1,7 @@
 import os
 
 from conan import ConanFile
-from conan.tools.cmake import CMakeDeps, CMakeToolchain
+from conan.tools.cmake import CMakeDeps, CMakeToolchain, cmake_layout
 from conan.tools.env import VirtualBuildEnv
 from conan.tools.files import copy
 
@@ -15,6 +15,9 @@ class CosimCLIConan(ConanFile):
             self.tool_requires("patchelf/[<0.18]")
         self.requires("libcosim/0.11.0@osp/testing-feature_conan-2")
         self.requires("boost/[>=1.71]")
+
+    def layout(self):
+        cmake_layout(self)
 
     def generate(self):
         # Import shared libraries and executables from dependency packages
@@ -49,7 +52,6 @@ class CosimCLIConan(ConanFile):
 
         # Generate build system
         tc = CMakeToolchain(self)
-        tc.user_presets_path = False # Don't touch source directory.
         tc.generate()
         CMakeDeps(self).generate()
 

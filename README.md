@@ -4,9 +4,9 @@ cosim
 `cosim` is a command-line co-simulation tool based on [libcosim].
 It has three primary use cases:
 
-  * Running simulations from other programs or scripts
+  * Running co-simulations from a command-line environment
+  * Running co-simulations from other programs or scripts
   * FMU testing and debugging
-  * Users who simply prefer to work from the command line
 
 Specifically, `cosim` can be used to perform the following tasks:
 
@@ -15,7 +15,7 @@ Specifically, `cosim` can be used to perform the following tasks:
   * Show information about an FMU
 
 The output from the simulations is in the form of CSV files that can be easily
-parsed by other programs, for example Microsoft Excel.
+parsed by other programs.
 
 Usage
 -----
@@ -30,8 +30,8 @@ extra information (e.g. progress) to the user's terminal:
 
     cosim run path/to/my_system --output-dir=path/to/my_results -v
 
-The documentation is built into the program itself, by means of the `help` subcommand.
-
+The documentation is built into the program itself and can be accessed by
+means of the `help` subcommand.
 
 How to build
 ------------
@@ -40,30 +40,40 @@ The tools and steps required to build `cosim` are more or less the same as those
 required for libcosim, so we refer to the [libcosim README] for this information.
 There are some noteworthy differences, though:
 
-  * Conan is a *mandatory* requirement for the time being.
+  * Conan 2.x is a *mandatory* requirement for the time being.
   * Doxygen is not needed, as there is no API documentation to generate.
 
 To summarise, a typical configure–build–run session might look like the following.
-On Linux:
-
-    mkdir build
-    cd build
-    conan install ..
-    cmake .. -DCMAKE_BUILD_TYPE=Debug
-    cmake --build .
-    ./cosim help
-
+On Linux, starting from the root source directory (the one that contains this
+README):
+```sh
+conan install -s build_type=Release --build=missing .   # Install dependencies
+cmake --preset=conan-release                            # Configure build system
+cmake --build --preset=conan-release                    # Build
+cmake --build --preset=conan-release --target=install   # Install to dist/
+build/Release/dist/bin/cosim help                       # Run
+```
 And on Windows:
+```bat
+conan install -s build_type=Release --build=missing .   &:: Install dependencies
+cmake --preset=conan-default                            &:: Configure build system
+cmake --build --preset=conan-release                    &:: Build
+cmake --build --preset=conan-release --target=install   &:: Install to dist/
+build/Release/dist/bin/cosim help                       &:: Run
+```
+In both cases, `Release` and `conan-release` can be replaced with `Debug` and
+`conan-debug`, respectively, if you're building for development purposes.
 
-    mkdir build
-    cd build
-    conan install .. -s build_type=Debug
-    cmake .. -A x64
-    cmake --build .
-    activate_run.bat
-    Debug\cosim help
-    deactivate_run.bat
+The `cmake --target=install` command will copy the resulting `cosim`
+executable to the `build/Release/dist/bin` directory. The shared libraries
+that `cosim` depends on will be copied to the same directory or to
+`build/Release/lib`, depending on platform, by the `conan install` command.
+Thus, the `dist` directory contains the entire release bundle. You may also
+choose to install to a different directory by setting the
+[`CMAKE_INSTALL_PREFIX`] variable, but note that dependencies won't be
+included in the installation then.
 
 
+[`CMAKE_INSTALL_PREFIX`]: https://cmake.org/cmake/help/latest/variable/CMAKE_INSTALL_PREFIX.html
 [libcosim]: https://github.com/open-simulation-platform/libcosim
 [libcosim README]: https://github.com/open-simulation-platform/libcosim#readme

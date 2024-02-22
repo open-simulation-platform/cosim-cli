@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project("cosim" VERSION "0.8.0")
-set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist" CACHE PATH "Install prefix" FORCE)
+endif()
 
 # To enable verbose when needed
 set(CMAKE_VERBOSE_MAKEFILE OFF)
