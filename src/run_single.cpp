@@ -273,7 +273,6 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
     }
 
     const auto simulator = model->instantiate("simulator");
-    simulator->setup(runOptions.begin_time, runOptions.end_time, {});
     if (initialValues) {
         simulator
             ->set_variables(
@@ -286,6 +285,7 @@ int run_single_subcommand::run(const boost::program_options::variables_map& args
                 gsl::make_span(initialValues->stringVariables),
                 gsl::make_span(initialValues->stringValues));
     }
+    simulator->setup(runOptions.begin_time, runOptions.end_time, {});
 
     auto output = csv_output_writer(
         simulator,
