@@ -1,6 +1,9 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.15)
 project("cosim" VERSION "0.8.0")
-set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist")
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist" CACHE PATH "Install prefix" FORCE)
+endif()
 
 # To enable verbose when needed
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -33,15 +36,8 @@ endif()
 # Dependencies
 # ==============================================================================
 
-if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    conan_basic_setup(NO_OUTPUT_DIRS)
-else()
-    message(FATAL_ERROR "The file conanbuildinfo.cmake doesn't exist, you have to run conan install first!")
-endif()
-
 find_package(libcosim REQUIRED)
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost REQUIRED COMPONENTS log program_options)
 
 # ==============================================================================
 # Targets
@@ -77,7 +73,7 @@ add_executable(cosim
     "src/version_option.cpp"
 )
 target_include_directories(cosim PRIVATE "${generatedFilesDir}")
-target_link_libraries(cosim PRIVATE libcosim::cosim Boost::program_options)
+target_link_libraries(cosim PRIVATE libcosim::cosim Boost::log Boost::program_options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # This makes the linker set RPATH rather than RUNPATH for the resulting
