@@ -45,8 +45,10 @@ class CosimCLIConan(ConanFile):
                 "boost_thread*"],
             "thrift": ["thrift", "thriftd"],
         }
-        for req, dep in self.dependencies.items():
-            self._import_dynamic_libs(dep, dldir, dependency_libs.get(req.ref.name, ["*"]))
+        licensedir = os.path.join(self.build_folder, "dist", "doc", "licenses")
+        for dep in self.dependencies.host.values():
+            self._import_dynamic_libs(dep, dldir, dependency_libs.get(dep.ref.name, ["*"]))
+            self._import_license(dep, licensedir)
         if self.dependencies["libcosim"].options.proxyfmu:
             self._import_executables(self.dependencies["proxyfmu"], bindir, ["*"])
 
@@ -73,6 +75,20 @@ class CosimCLIConan(ConanFile):
                 patternx = pattern+".exe" if self.settings.os == "Windows" else pattern
                 files = copy(self, patternx, bindir, target_dir, keep_path=False)
                 self._update_rpath(files, "$ORIGIN/../lib")
+
+    def _import_license(self, dependency, target_dir):
+        dep_license_dir = os.path.join(target_dir, dependency.ref.name)
+        copy(self, "licenses/*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "license*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "*/license*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "copying*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "*/copying*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "notice*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "*/notice*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "authors*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "*/authors*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "copyright*", dependency.package_folder, dep_license_dir, keep_path=False)
+        copy(self, "*/copyright*", dependency.package_folder, dep_license_dir, keep_path=False)
 
     def _update_rpath(self, files, new_rpath):
         if files and self.settings.os == "Linux":
