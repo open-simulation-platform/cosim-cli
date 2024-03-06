@@ -76,19 +76,21 @@ class CosimCLIConan(ConanFile):
                 files = copy(self, patternx, bindir, target_dir, keep_path=False)
                 self._update_rpath(files, "$ORIGIN/../lib")
 
-    def _import_license(self, dependency, target_dir):
-        dep_license_dir = os.path.join(target_dir, dependency.ref.name)
-        copy(self, "licenses/*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "license*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "*/license*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "copying*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "*/copying*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "notice*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "*/notice*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "authors*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "*/authors*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "copyright*", dependency.package_folder, dep_license_dir, keep_path=False)
-        copy(self, "*/copyright*", dependency.package_folder, dep_license_dir, keep_path=False)
+    def _import_license(self, dependency, licenses_dir):
+        src_licenses_dir = os.path.join(dependency.package_folder, "licenses")
+        tgt_licenses_dir = os.path.join(licenses_dir, dependency.ref.name)
+        if os.path.isdir(src_licenses_dir):
+            # Copy the full contents of '<package_dir>/licenses/' if it exists,
+            # which it does for virtually all conan-center packages.
+            copy(self, "*", src_licenses_dir, tgt_licenses_dir)
+        else:
+            # Copy everything that looks like it might contain license and
+            # copyright information.
+            copy(self, "*licen?e*", dependency.package_folder, tgt_licenses_dir, keep_path=False)
+            copy(self, "*copying*", dependency.package_folder, tgt_licenses_dir, keep_path=False)
+            copy(self, "*notice*", dependency.package_folder, tgt_licenses_dir, keep_path=False)
+            copy(self, "*authors*", dependency.package_folder, tgt_licenses_dir, keep_path=False)
+            copy(self, "*copyright*", dependency.package_folder, tgt_licenses_dir, keep_path=False)
 
     def _update_rpath(self, files, new_rpath):
         if files and self.settings.os == "Linux":
