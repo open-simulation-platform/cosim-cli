@@ -7,7 +7,7 @@ from conan.tools.files import copy
 
 class CosimCLIConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    default_options = { "*:shared": True }
+    default_options = { "*:shared": False }
 
     def requirements(self):
         self.tool_requires("cmake/[>=3.19]")
