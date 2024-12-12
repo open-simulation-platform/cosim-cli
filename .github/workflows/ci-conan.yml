@@ -49,6 +49,7 @@ jobs:
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_proxyfmu }}
           path: build/${{ matrix.build_type }}/dist
+          overwrite: true
 
   windows:
     name: Windows
@@ -81,3 +82,4 @@ jobs:
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.option_proxyfmu }}
           path: build/dist
+          overwrite: true
