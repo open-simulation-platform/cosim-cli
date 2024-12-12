@@ -45,7 +45,7 @@ jobs:
           mkdir -m 0777 build
           docker run --rm -v $(pwd):/mnt/source osp-builder
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.compiler_version }}-${{ matrix.option_proxyfmu }}
           path: build/${{ matrix.build_type }}/dist
@@ -77,7 +77,7 @@ jobs:
           cmake --build build --config ${{ matrix.build_type }}
           cmake --build build --config ${{ matrix.build_type }} --target install
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cosim-${{ runner.os }}-${{ matrix.build_type }}-${{ matrix.option_proxyfmu }}
           path: build/dist
