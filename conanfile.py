@@ -13,7 +13,7 @@ class CosimCLIConan(ConanFile):
         self.tool_requires("cmake/[>=3.19]")
         if self.settings.os == "Linux":
             self.tool_requires("patchelf/[<0.18]")
-        self.requires("libcosim/0.10.4@osp/stable")
+        self.requires("libcosim/0.11.1@osp/stable")
         self.requires("boost/[>=1.71]")
 
     def layout(self):
