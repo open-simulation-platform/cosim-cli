@@ -36,6 +36,7 @@ endif()
 # Dependencies
 # ==============================================================================
 
+find_package(libcbor REQUIRED)
 find_package(libcosim REQUIRED)
 find_package(Boost REQUIRED COMPONENTS log program_options)
 

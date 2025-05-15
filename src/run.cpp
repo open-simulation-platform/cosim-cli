@@ -82,9 +82,18 @@ cosim::execution load_system_structure(
         (cosim::filesystem::is_directory(path) &&
             cosim::filesystem::exists(path / "OspSystemStructure.xml"))) {
         const auto config = cosim::load_osp_config(path, uriResolver);
-        auto execution = cosim::execution(
-            startTime,
-            std::make_shared<cosim::fixed_step_algorithm>(config.step_size, workerThreadCount));
+        std::shared_ptr<cosim::algorithm> algorithm;
+
+        std::visit([&algorithm, &config, &workerThreadCount](auto&& value) {
+            using T = std::decay_t<decltype(value)>;
+            if constexpr (std::is_same_v<T, cosim::fixed_step_algorithm_params>) {
+                algorithm = std::make_shared<cosim::fixed_step_algorithm>(std::get<cosim::fixed_step_algorithm_params>(config.algorithm_configuration), workerThreadCount);
+            } else if constexpr (std::is_same_v<T, cosim::ecco_algorithm_params>) {
+                algorithm = std::make_shared<cosim::ecco_algorithm>(std::get<cosim::ecco_algorithm_params>(config.algorithm_configuration), workerThreadCount);
+            }
+        }, config.algorithm_configuration);
+
+        auto execution = cosim::execution(startTime, algorithm);
         cosim::inject_system_structure(
             execution,
             config.system_structure,
@@ -154,6 +163,7 @@ public:
         : logger_(startTime, duration, percentIncrement, mrProgressResolution)
     {}
 
+
 private:
     void simulator_added(cosim::simulator_index, cosim::observable*, cosim::time_point) override {}
     void simulator_removed(cosim::simulator_index, cosim::time_point) override {}
@@ -183,6 +193,8 @@ private:
         cosim::time_point)
         override
     {}
+
+    void state_restored(cosim::step_number, cosim::time_point) override {}
 
     progress_logger logger_;
 };
