@@ -21,6 +21,8 @@
 
 #include <chrono>
 #include <memory>
+#include <variant>
+#include <type_traits>
 
 
 void run_subcommand::setup_options(
@@ -72,6 +74,12 @@ void run_subcommand::setup_options(
 namespace
 {
 
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+
+template<class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>;
+
 cosim::execution load_system_structure(
     const cosim::filesystem::path& path,
     cosim::model_uri_resolver& uriResolver,
@@ -84,14 +92,15 @@ cosim::execution load_system_structure(
         const auto config = cosim::load_osp_config(path, uriResolver);
         std::shared_ptr<cosim::algorithm> algorithm;
 
-        std::visit([&algorithm, &config, &workerThreadCount](auto&& value) {
-            using T = std::decay_t<decltype(value)>;
-            if constexpr (std::is_same_v<T, cosim::fixed_step_algorithm_params>) {
-                algorithm = std::make_shared<cosim::fixed_step_algorithm>(std::get<cosim::fixed_step_algorithm_params>(config.algorithm_configuration), workerThreadCount);
-            } else if constexpr (std::is_same_v<T, cosim::ecco_algorithm_params>) {
-                algorithm = std::make_shared<cosim::ecco_algorithm>(std::get<cosim::ecco_algorithm_params>(config.algorithm_configuration), workerThreadCount);
-            }
-        }, config.algorithm_configuration);
+        std::visit(
+            overloaded{
+                [&algorithm, &workerThreadCount](const cosim::fixed_step_algorithm_params& params) {
+                    algorithm = std::make_shared<cosim::fixed_step_algorithm>(params, workerThreadCount);
+                },
+                [&algorithm, &workerThreadCount](const cosim::ecco_algorithm_params& params) {
+                    algorithm = std::make_shared<cosim::ecco_algorithm>(params, workerThreadCount);
+                }},
+            config.algorithm_configuration);
 
         auto execution = cosim::execution(startTime, algorithm);
         cosim::inject_system_structure(
