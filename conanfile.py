@@ -10,11 +10,11 @@ class CosimCLIConan(ConanFile):
     default_options = { "*:shared": False }
 
     def requirements(self):
-        self.tool_requires("cmake/[>=3.19]")
+        self.tool_requires("cmake/[>=4.0]")
         if self.settings.os == "Linux":
             self.tool_requires("patchelf/[<0.18]")
-        self.requires("libcosim/0.11.1@osp/stable")
-        self.requires("boost/[>=1.71]")
+        self.requires("libcosim/0.11.2@osp/stable")
+        self.requires("boost/[~=1.85]")
 
     def layout(self):
         cmake_layout(self)
