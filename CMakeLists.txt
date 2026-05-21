@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project("cosim" VERSION "0.8.0")
+project("cosim" VERSION "0.11.2")
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dist" CACHE PATH "Install prefix" FORCE)
